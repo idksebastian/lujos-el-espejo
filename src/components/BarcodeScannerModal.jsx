@@ -11,13 +11,15 @@ import { X, TriangleAlert, RotateCw, Flashlight, FlashlightOff, Keyboard } from 
 const FORMATOS_SOPORTADOS = ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf']
 const INTERVALO_MS = 200
 
-// OJO: se intentó pedir resolución alta + focusMode:'continuous' para leer
-// mejor códigos pequeños/curvos, pero en varios celulares reales esa
-// combinación hace que la cámara entregue un cuadro negro (el stream queda
-// "vivo" pero sin frames) en vez de fallar con un error detectable. Se
-// revierte a la constraint mínima que sí funciona en todos los dispositivos.
+// OJO: pedir resolución alta (1920x1080) + focusMode:'continuous' hacía que
+// la cámara entregara un cuadro negro en varios celulares reales (el stream
+// queda "vivo" pero sin frames). 1280x720 sin "advanced" es un pedido mucho
+// más estándar/soportado — lo justo para que un código pequeño no quede
+// hecho de 4 píxeles, sin repetir el constraint que rompió la cámara.
 const CONSTRAINTS_VIDEO = {
   facingMode: { ideal: 'environment' },
+  width: { ideal: 1280 },
+  height: { ideal: 720 },
 }
 
 // Pitido corto sintetizado con Web Audio — no requiere cargar ningún
@@ -54,6 +56,7 @@ export default function BarcodeScannerModal({ open, title = 'Escanear código', 
   const [torchOn, setTorchOn] = useState(false)
   const [manualAbierto, setManualAbierto] = useState(false)
   const [manualValor, setManualValor] = useState('')
+  const [diag, setDiag] = useState({ resolucion: '', intentos: 0, ultimoError: '' })
 
   onDetectedRef.current = onDetected
 
@@ -74,6 +77,7 @@ export default function BarcodeScannerModal({ open, title = 'Escanear código', 
     setTorchOn(false)
     setManualAbierto(false)
     setManualValor('')
+    setDiag({ resolucion: '', intentos: 0, ultimoError: '' })
     detectorRef.current = new BarcodeDetector({ formats: FORMATOS_SOPORTADOS })
 
     function actualizarTorch(stream) {
@@ -105,6 +109,9 @@ export default function BarcodeScannerModal({ open, title = 'Escanear código', 
         if (videoRef.current) videoRef.current.srcObject = streamInicial
         actualizarTorch(streamInicial)
 
+        const settings = streamInicial.getVideoTracks()[0]?.getSettings?.() ?? {}
+        setDiag((d) => ({ ...d, resolucion: `${settings.width ?? '?'}×${settings.height ?? '?'}` }))
+
         loopDeteccion()
       } catch (err) {
         if (cancelled) return
@@ -129,6 +136,7 @@ export default function BarcodeScannerModal({ open, title = 'Escanear código', 
         detectando = true
         try {
           const resultados = await detectorRef.current.detect(video)
+          setDiag((d) => ({ ...d, intentos: d.intentos + 1 }))
           if (!cancelled && !detectado && resultados.length > 0) {
             detectado = true
             reproducirBeep()
@@ -137,6 +145,7 @@ export default function BarcodeScannerModal({ open, title = 'Escanear código', 
           }
         } catch (err) {
           console.error('[scanner]', err)
+          setDiag((d) => ({ ...d, intentos: d.intentos + 1, ultimoError: err?.message || String(err) }))
         } finally {
           detectando = false
         }
@@ -167,8 +176,11 @@ export default function BarcodeScannerModal({ open, title = 'Escanear código', 
       if (videoRef.current) videoRef.current.srcObject = nuevoStream
       setCamaraIndex(siguiente)
       setTorchOn(false)
-      const caps = nuevoStream.getVideoTracks()[0]?.getCapabilities?.() ?? {}
+      const track = nuevoStream.getVideoTracks()[0]
+      const caps = track?.getCapabilities?.() ?? {}
       setTorchDisponible(!!caps.torch)
+      const settings = track?.getSettings?.() ?? {}
+      setDiag((d) => ({ ...d, resolucion: `${settings.width ?? '?'}×${settings.height ?? '?'}` }))
     } catch (err) {
       setError('No se pudo cambiar de cámara: ' + err.message)
     }
@@ -240,6 +252,13 @@ export default function BarcodeScannerModal({ open, title = 'Escanear código', 
               Apunta al código…
             </p>
           </div>
+        )}
+
+        {!error && (
+          <p className="mt-2 text-center font-mono text-[10px] text-white/40">
+            res: {diag.resolucion || '…'} · intentos: {diag.intentos}
+            {diag.ultimoError && <span className="text-brand-400"> · error: {diag.ultimoError}</span>}
+          </p>
         )}
 
         {manualAbierto ? (
