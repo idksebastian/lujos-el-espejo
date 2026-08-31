@@ -1,0 +1,14 @@
+# Configuracion local para `supabase start` / `supabase db push`.
+# En el proyecto hospedado (dashboard.supabase.com) estos mismos ajustes
+# deben replicarse manualmente en Authentication > Providers > Email:
+# desactivar "Confirm email" (los correos son ficticios, no existen).
+
+project_id = "lujos-el-espejo"
+
+[auth]
+enable_signup = false
+enable_confirmations = false
+
+[auth.email]
+enable_confirmations = false
+double_confirm_changes = false
