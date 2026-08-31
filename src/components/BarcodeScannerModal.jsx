@@ -11,14 +11,13 @@ import { X, TriangleAlert, RotateCw, Flashlight, FlashlightOff, Keyboard } from 
 const FORMATOS_SOPORTADOS = ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf']
 const INTERVALO_MS = 200
 
-// Resolución alta + enfoque continuo ayudan mucho con códigos pequeños o
-// impresos sobre superficies curvas (frascos, envases) — son "ideal", así
-// que si el dispositivo no los soporta simplemente se ignoran, no fallan.
+// OJO: se intentó pedir resolución alta + focusMode:'continuous' para leer
+// mejor códigos pequeños/curvos, pero en varios celulares reales esa
+// combinación hace que la cámara entregue un cuadro negro (el stream queda
+// "vivo" pero sin frames) en vez de fallar con un error detectable. Se
+// revierte a la constraint mínima que sí funciona en todos los dispositivos.
 const CONSTRAINTS_VIDEO = {
   facingMode: { ideal: 'environment' },
-  width: { ideal: 1920 },
-  height: { ideal: 1080 },
-  advanced: [{ focusMode: 'continuous' }],
 }
 
 // Pitido corto sintetizado con Web Audio — no requiere cargar ningún
