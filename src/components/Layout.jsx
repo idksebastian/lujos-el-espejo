@@ -19,19 +19,19 @@ import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabaseClient'
 
 const ADMIN_LINKS = [
-  { to: '/', label: 'Inicio', end: true, icon: LayoutDashboard },
-  { to: '/inventario', label: 'Inventario', icon: Package },
-  { to: '/ventas/nueva', label: 'Nueva venta', icon: ShoppingCart },
-  { to: '/ventas/historial', label: 'Historial', icon: History },
-  { to: '/reportes', label: 'Reportes', icon: BarChart3 },
-  { to: '/cierre', label: 'Cierre del día', icon: CalendarCheck2 },
-  { to: '/gastos', label: 'Gastos', icon: Wallet },
-  { to: '/mecanicos', label: 'Mecánicos', icon: Wrench },
-  { to: '/usuarios', label: 'Usuarios', icon: Users },
-  { to: '/configuracion', label: 'Configuración', icon: Settings },
+  { to: '/admin', label: 'Inicio', end: true, icon: LayoutDashboard },
+  { to: '/admin/inventario', label: 'Inventario', icon: Package },
+  { to: '/admin/ventas/nueva', label: 'Nueva venta', icon: ShoppingCart },
+  { to: '/admin/ventas/historial', label: 'Historial', icon: History },
+  { to: '/admin/reportes', label: 'Reportes', icon: BarChart3 },
+  { to: '/admin/cierre', label: 'Cierre del día', icon: CalendarCheck2 },
+  { to: '/admin/gastos', label: 'Gastos', icon: Wallet },
+  { to: '/admin/mecanicos', label: 'Mecánicos', icon: Wrench },
+  { to: '/admin/usuarios', label: 'Usuarios', icon: Users },
+  { to: '/admin/configuracion', label: 'Configuración', icon: Settings },
 ]
 
-const MECANICO_LINKS = [{ to: '/inventario', label: 'Inventario', end: true, icon: Package }]
+const MECANICO_LINKS = [{ to: '/admin/inventario', label: 'Inventario', end: true, icon: Package }]
 
 export default function Layout() {
   const { usuario, logout } = useAuth()

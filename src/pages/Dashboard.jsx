@@ -10,7 +10,7 @@ export default function Dashboard() {
       <div className="mx-auto max-w-md text-center">
         <p className="font-display text-2xl text-white">Hola, {usuario?.nombre_completo}</p>
         <p className="mt-1 text-sm text-muted">Consulta el inventario disponible.</p>
-        <Link to="/inventario" className="btn-primary mt-6 inline-flex">
+        <Link to="/admin/inventario" className="btn-primary mt-6 inline-flex">
           <Package size={16} />
           Ver inventario
         </Link>
@@ -19,11 +19,11 @@ export default function Dashboard() {
   }
 
   const accesos = [
-    { to: '/ventas/nueva', label: 'Nueva venta', desc: 'Registrar una venta y ver el reparto', icon: ShoppingCart },
-    { to: '/inventario', label: 'Inventario', desc: 'Productos y stock', icon: Package },
-    { to: '/ventas/historial', label: 'Historial', desc: 'Ventas registradas', icon: History },
-    { to: '/reportes', label: 'Reportes', desc: 'Más vendidos y stock bajo', icon: BarChart3 },
-    { to: '/cierre', label: 'Cierre del día', desc: 'Generar imagen de cierre', icon: CalendarCheck2 },
+    { to: '/admin/ventas/nueva', label: 'Nueva venta', desc: 'Registrar una venta y ver el reparto', icon: ShoppingCart },
+    { to: '/admin/inventario', label: 'Inventario', desc: 'Productos y stock', icon: Package },
+    { to: '/admin/ventas/historial', label: 'Historial', desc: 'Ventas registradas', icon: History },
+    { to: '/admin/reportes', label: 'Reportes', desc: 'Más vendidos y stock bajo', icon: BarChart3 },
+    { to: '/admin/cierre', label: 'Cierre del día', desc: 'Generar imagen de cierre', icon: CalendarCheck2 },
   ]
 
   return (

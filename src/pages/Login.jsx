@@ -12,7 +12,7 @@ export default function Login() {
   const [error, setError] = useState('')
   const [enviando, setEnviando] = useState(false)
 
-  const from = location.state?.from?.pathname || '/'
+  const from = location.state?.from?.pathname || '/admin'
 
   async function handleSubmit(e) {
     e.preventDefault()

@@ -11,11 +11,11 @@ export default function ProtectedRoute({ roles }) {
   }
 
   if (!usuario) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/admin/login" replace />
   }
 
   if (roles && !roles.includes(usuario.rol)) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/admin" replace />
   }
 
   return <Outlet />

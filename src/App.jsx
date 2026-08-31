@@ -3,6 +3,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ConfiguracionProvider } from './contexts/ConfiguracionContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
+import LandingPage from './pages/LandingPage'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import InventarioPage from './pages/inventario/InventarioPage'
@@ -21,22 +22,23 @@ export default function App() {
       <AuthProvider>
         <ConfiguracionProvider>
           <Routes>
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/admin/login" element={<Login />} />
 
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/inventario" element={<InventarioPage />} />
+                <Route path="/admin" element={<Dashboard />} />
+                <Route path="/admin/inventario" element={<InventarioPage />} />
 
                 <Route element={<ProtectedRoute roles={['admin']} />}>
-                  <Route path="/ventas/nueva" element={<NuevaVentaPage />} />
-                  <Route path="/ventas/historial" element={<HistorialVentasPage />} />
-                  <Route path="/reportes" element={<ReportesPage />} />
-                  <Route path="/cierre" element={<CierreDiaPage />} />
-                  <Route path="/gastos" element={<GastosPage />} />
-                  <Route path="/mecanicos" element={<MecanicosPage />} />
-                  <Route path="/usuarios" element={<UsuariosPage />} />
-                  <Route path="/configuracion" element={<ConfiguracionPage />} />
+                  <Route path="/admin/ventas/nueva" element={<NuevaVentaPage />} />
+                  <Route path="/admin/ventas/historial" element={<HistorialVentasPage />} />
+                  <Route path="/admin/reportes" element={<ReportesPage />} />
+                  <Route path="/admin/cierre" element={<CierreDiaPage />} />
+                  <Route path="/admin/gastos" element={<GastosPage />} />
+                  <Route path="/admin/mecanicos" element={<MecanicosPage />} />
+                  <Route path="/admin/usuarios" element={<UsuariosPage />} />
+                  <Route path="/admin/configuracion" element={<ConfiguracionPage />} />
                 </Route>
               </Route>
             </Route>
