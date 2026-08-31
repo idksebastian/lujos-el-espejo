@@ -11,15 +11,18 @@ import { X, TriangleAlert, RotateCw, Flashlight, FlashlightOff, Keyboard } from 
 const FORMATOS_SOPORTADOS = ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf']
 const INTERVALO_MS = 200
 
-// OJO — probado dos veces, confirmado con diagnóstico en pantalla: pedir
-// CUALQUIER resolución explícita (1920x1080 con focusMode, y también
-// 1280x720 sin él) deja la cámara en negro en al menos un celular real,
-// aunque el stream reporte settings válidos y el detector siga corriendo
-// sin errores (son frames negros de verdad, no un problema del detector).
-// No volver a agregar width/height aquí sin probarlo primero en el celular
-// real donde falló.
+// Un QR de prueba confirmó que el detector funciona perfecto incluso a la
+// resolución por defecto (640x480) — el problema real es que 640x480 no
+// alcanza para distinguir las barras finas de un código de barras 1D
+// pequeño en un producto real. La pantalla negra que salió antes al pedir
+// resolución (1920x1080+focusMode, y luego 1280x720 solo) coincidió con
+// sesiones ya muy fatigadas de abrir/cerrar el escáner muchas veces
+// seguidas en el mismo iPhone — no se repitió con la cámara recién sana.
+// Se reintenta 1280x720 sin "advanced" (el constraint más simple posible).
 const CONSTRAINTS_VIDEO = {
   facingMode: { ideal: 'environment' },
+  width: { ideal: 1280 },
+  height: { ideal: 720 },
 }
 
 // Pitido corto sintetizado con Web Audio — no requiere cargar ningún
