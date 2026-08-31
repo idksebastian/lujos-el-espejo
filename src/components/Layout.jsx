@@ -53,7 +53,7 @@ export default function Layout() {
   }, [usuario?.rol, location.pathname])
 
   return (
-    <div className="flex min-h-screen bg-ink text-white">
+    <div className="flex h-screen overflow-hidden bg-ink text-white">
       <SidebarContent
         links={links}
         usuario={usuario}
@@ -77,8 +77,8 @@ export default function Layout() {
         </div>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-white/8 bg-ink/95 px-4 py-3 backdrop-blur md:hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header className="flex shrink-0 items-center justify-between border-b border-white/8 bg-ink/95 px-4 py-3 backdrop-blur md:hidden">
           <button
             onClick={() => setDrawerOpen(true)}
             className="rounded-lg p-2 text-white/70 hover:bg-white/10 hover:text-white"
@@ -92,7 +92,7 @@ export default function Layout() {
           <div className="w-9" />
         </header>
 
-        <main className="flex-1 p-4 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8">
           <Outlet />
         </main>
       </div>
@@ -133,7 +133,7 @@ function SidebarContent({ links, usuario, onLogout, stockBajoCount = 0, onNaviga
             >
               <Icon size={18} strokeWidth={2} />
               {link.label}
-              {link.to === '/reportes' && stockBajoCount > 0 && (
+              {link.to === '/admin/reportes' && stockBajoCount > 0 && (
                 <span className="ml-auto flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
                   {stockBajoCount}
                 </span>

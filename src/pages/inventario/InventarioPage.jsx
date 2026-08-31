@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Plus, Pencil, Power, TriangleAlert, Search, PackagePlus, Camera } from 'lucide-react'
+import { Plus, Pencil, Power, TriangleAlert, Search, PackagePlus, Camera, Trash2 } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
 import ProductoFormModal from '../../components/ProductoFormModal'
@@ -65,10 +65,29 @@ export default function InventarioPage() {
     cargar()
   }
 
+  async function handleEliminar(producto) {
+    if (!window.confirm(`¿Eliminar "${producto.nombre}" por completo? Esto no se puede deshacer.`)) return
+
+    setError('')
+    const { error } = await supabase.from('productos').delete().eq('id', producto.id)
+    if (error) {
+      setError(
+        error.code === '23503'
+          ? `No se puede eliminar "${producto.nombre}": ya tiene ventas registradas. Desactívalo en su lugar.`
+          : error.message
+      )
+      return
+    }
+    cargar()
+  }
+
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <div className="flex items-center justify-between gap-2">
-        <h1 className="font-display text-2xl text-white">Inventario</h1>
+        <div>
+          <h1 className="font-display text-2xl text-white">Inventario</h1>
+          {!cargando && <p className="text-xs text-muted">{productos.length} producto{productos.length !== 1 && 's'} registrado{productos.length !== 1 && 's'}</p>}
+        </div>
         {isAdmin && (
           <button onClick={() => setModal({ open: true, producto: null })} className="btn-primary">
             <Plus size={16} />
@@ -160,6 +179,13 @@ export default function InventarioPage() {
                       aria-label={p.activo ? 'Desactivar' : 'Activar'}
                     >
                       <Power size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleEliminar(p)}
+                      className="rounded-lg border border-white/10 p-2 text-white/70 hover:bg-brand-700/15 hover:text-brand-400"
+                      aria-label="Eliminar"
+                    >
+                      <Trash2 size={14} />
                     </button>
                   </div>
                 )}
