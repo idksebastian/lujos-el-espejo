@@ -166,6 +166,11 @@ export default function BarcodeScannerModal({ open, title = 'Escanear código', 
       clearTimeout(timer)
       streamRef.current?.getTracks().forEach((t) => t.stop())
       streamRef.current = null
+      // Safari/iOS a veces no libera la cámara de verdad hasta que también
+      // se limpia el srcObject del <video>, no solo se detienen los tracks.
+      // Sin esto, la siguiente vez que se abre el escáner (aunque sea en
+      // otra pantalla) puede recibir un stream "vivo" pero con frames negros.
+      if (videoRef.current) videoRef.current.srcObject = null
     }
   }, [open])
 
