@@ -9,7 +9,10 @@ import { X, TriangleAlert, RotateCw, Flashlight, FlashlightOff, Keyboard } from 
 // sobre el video en vivo -muchos intentos por segundo, como escanean apps
 // como Fitia- en vez de depender de una sola foto bien encuadrada.
 const FORMATOS_SOPORTADOS = ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf']
-const INTERVALO_MS = 200
+// A 720p, decodificar un cuadro ya toma su tiempo de por sí; esta espera es
+// aparte de eso (se suma después de cada intento), así que se deja mínima
+// para no sumarle lentitud extra encima del trabajo real de decodificar.
+const INTERVALO_MS = 50
 
 // Un QR de prueba confirmó que el detector funciona perfecto incluso a la
 // resolución por defecto (640x480) — el problema real es que 640x480 no
