@@ -11,15 +11,15 @@ import { X, TriangleAlert, RotateCw, Flashlight, FlashlightOff, Keyboard } from 
 const FORMATOS_SOPORTADOS = ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'itf']
 const INTERVALO_MS = 200
 
-// OJO: pedir resolución alta (1920x1080) + focusMode:'continuous' hacía que
-// la cámara entregara un cuadro negro en varios celulares reales (el stream
-// queda "vivo" pero sin frames). 1280x720 sin "advanced" es un pedido mucho
-// más estándar/soportado — lo justo para que un código pequeño no quede
-// hecho de 4 píxeles, sin repetir el constraint que rompió la cámara.
+// OJO — probado dos veces, confirmado con diagnóstico en pantalla: pedir
+// CUALQUIER resolución explícita (1920x1080 con focusMode, y también
+// 1280x720 sin él) deja la cámara en negro en al menos un celular real,
+// aunque el stream reporte settings válidos y el detector siga corriendo
+// sin errores (son frames negros de verdad, no un problema del detector).
+// No volver a agregar width/height aquí sin probarlo primero en el celular
+// real donde falló.
 const CONSTRAINTS_VIDEO = {
   facingMode: { ideal: 'environment' },
-  width: { ideal: 1280 },
-  height: { ideal: 720 },
 }
 
 // Pitido corto sintetizado con Web Audio — no requiere cargar ningún
