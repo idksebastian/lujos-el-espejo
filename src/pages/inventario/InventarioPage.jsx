@@ -45,6 +45,15 @@ export default function InventarioPage() {
     return productos.filter((p) => p.nombre.toLowerCase().includes(term))
   }, [productos, busqueda])
 
+  // Plata que hay metida en el inventario: costo de compra × stock que
+  // queda de cada producto, sumado. Solo el admin ve costos, así que este
+  // total también es solo para admin (igual que ya pasaba con "Costo" en
+  // cada fila).
+  const totalInvertido = useMemo(
+    () => productos.reduce((sum, p) => sum + Number(p.costo ?? 0) * (p.stock_actual ?? 0), 0),
+    [productos]
+  )
+
   function handleEscaneado(codigo) {
     setScannerOpen(false)
     setAvisoScan('')
@@ -86,7 +95,12 @@ export default function InventarioPage() {
       <div className="flex items-center justify-between gap-2">
         <div>
           <h1 className="font-display text-2xl text-white">Inventario</h1>
-          {!cargando && <p className="text-xs text-muted">{productos.length} producto{productos.length !== 1 && 's'} registrado{productos.length !== 1 && 's'}</p>}
+          {!cargando && (
+            <p className="text-xs text-muted">
+              {productos.length} producto{productos.length !== 1 && 's'} registrado{productos.length !== 1 && 's'}
+              {isAdmin && ` · $${totalInvertido.toLocaleString('es-CO')} invertidos`}
+            </p>
+          )}
         </div>
         {isAdmin && (
           <button onClick={() => setModal({ open: true, producto: null })} className="btn-primary">
