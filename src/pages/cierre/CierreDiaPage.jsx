@@ -44,7 +44,8 @@ export default function CierreDiaPage() {
            mecanico:mecanicos(nombre),
            registrador:usuarios(nombre_completo),
            venta_productos(cantidad, producto:productos(id, nombre)),
-           venta_servicios(descripcion, monto, es_externo, costo_externo)`
+           venta_servicios(descripcion, monto, es_externo, costo_externo),
+           venta_mecanicos_extra(monto, mecanico:mecanicos(nombre))`
         )
         .gte('fecha_hora', desde)
         .lte('fecha_hora', hasta)
@@ -122,16 +123,24 @@ export default function CierreDiaPage() {
     )
     const numServicios = ventas.reduce((s, v) => s + (v.venta_servicios?.length ?? 0), 0)
     const repartoTotal = ventas.reduce(
-      (acc, v) => ({
-        mecanico: acc.mecanico + Number(v.monto_mecanico),
-        duena: acc.duena + Number(v.monto_duena),
-        socio: acc.socio + Number(v.monto_socio),
-      }),
+      (acc, v) => {
+        const extra = (v.venta_mecanicos_extra ?? []).reduce((s, e) => s + Number(e.monto), 0)
+        return {
+          mecanico: acc.mecanico + Number(v.monto_mecanico) + extra,
+          duena: acc.duena + Number(v.monto_duena),
+          socio: acc.socio + Number(v.monto_socio),
+        }
+      },
       { mecanico: 0, duena: 0, socio: 0 }
     )
     repartoTotal.duena -= perdidaSocio1
     repartoTotal.socio -= perdidaSocio2
 
+    // Cada mecánico por su nombre — si una venta tuvo 2 mecánicos (uno con
+    // un monto aparte, el otro con el resto), cada uno aparece con lo que
+    // realmente le correspondió. "Ventas generadas" solo se le atribuye al
+    // mecánico principal de la venta, para no contar el mismo total dos
+    // veces si hubo un segundo mecánico.
     const porMecanicoMap = new Map()
     for (const v of ventas) {
       const nombre = v.mecanico?.nombre ?? 'Sin asignar'
@@ -139,6 +148,13 @@ export default function CierreDiaPage() {
       actual.totalGenerado += Number(v.monto_total)
       actual.totalCorresponde += Number(v.monto_mecanico)
       porMecanicoMap.set(nombre, actual)
+
+      for (const extra of v.venta_mecanicos_extra ?? []) {
+        const nombreExtra = extra.mecanico?.nombre ?? 'Sin asignar'
+        const actualExtra = porMecanicoMap.get(nombreExtra) ?? { nombre: nombreExtra, totalGenerado: 0, totalCorresponde: 0 }
+        actualExtra.totalCorresponde += Number(extra.monto)
+        porMecanicoMap.set(nombreExtra, actualExtra)
+      }
     }
 
     // Qué se vendió, agrupado por producto — y por diferencia, qué no se

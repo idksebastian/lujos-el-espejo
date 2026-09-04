@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { TriangleAlert, Search, Camera, Receipt, X, Undo2 } from 'lucide-react'
+import { TriangleAlert, Search, Camera, Receipt, X, Undo2, Pencil } from 'lucide-react'
 import { supabase } from '../../lib/supabaseClient'
 import { rangoDiaLocal } from '../../lib/fechas'
 import { useConfiguracion } from '../../contexts/ConfiguracionContext'
@@ -29,6 +29,24 @@ const DEVOLUCION_VACIA = {
   exito: false,
 }
 
+const METODOS_PAGO = [
+  { value: 'efectivo', label: 'Efectivo' },
+  { value: 'tarjeta', label: 'Tarjeta' },
+  { value: 'transferencia', label: 'Transferencia' },
+]
+
+const EDICION_VACIA = {
+  abierta: false,
+  venta: null,
+  mecanicoId: '',
+  metodoPago: 'efectivo',
+  clienteNombre: '',
+  ajusteFactura: false,
+  montoFactura: '',
+  guardando: false,
+  error: '',
+}
+
 export default function HistorialVentasPage() {
   const { nombre_socio_1: nombreSocio1, nombre_socio_2: nombreSocio2 } = useConfiguracion()
   const [ventas, setVentas] = useState([])
@@ -41,6 +59,7 @@ export default function HistorialVentasPage() {
   const [error, setError] = useState('')
   const [factura, setFactura] = useState({ abierta: false, cargando: false, blob: null, folio: '', error: '' })
   const [devolucion, setDevolucion] = useState(DEVOLUCION_VACIA)
+  const [edicion, setEdicion] = useState(EDICION_VACIA)
 
   useEffect(() => {
     supabase.from('mecanicos').select('id, nombre').order('nombre').then(({ data }) => setMecanicos(data ?? []))
@@ -62,7 +81,12 @@ export default function HistorialVentasPage() {
 
     let query = supabase
       .from('ventas')
-      .select('id, fecha_hora, monto_total, monto_factura, costo_total, monto_mecanico, monto_duena, monto_socio, metodo_pago, cliente_nombre, mecanico:mecanicos(nombre), registrador:usuarios(nombre_completo)')
+      .select(
+        `id, fecha_hora, monto_total, monto_factura, costo_total, monto_mecanico, monto_duena, monto_socio,
+         metodo_pago, cliente_nombre, mecanico_id, mecanico:mecanicos(nombre),
+         registrador:usuarios(nombre_completo),
+         venta_mecanicos_extra(monto, mecanico:mecanicos(nombre))`
+      )
       .order('fecha_hora', { ascending: false })
 
     if (filtros.desde) query = query.gte('fecha_hora', rangoDiaLocal(filtros.desde).desde)
@@ -173,6 +197,50 @@ export default function HistorialVentasPage() {
     setDevolucion((d) => ({ ...d, guardando: false, exito: true }))
   }
 
+  function handleAbrirEdicion(venta) {
+    setEdicion({
+      abierta: true,
+      venta,
+      mecanicoId: venta.mecanico_id ?? '',
+      metodoPago: venta.metodo_pago,
+      clienteNombre: venta.cliente_nombre ?? '',
+      ajusteFactura: venta.monto_factura != null && Number(venta.monto_factura) !== Number(venta.monto_total),
+      montoFactura: venta.monto_factura != null ? String(venta.monto_factura) : '',
+      guardando: false,
+      error: '',
+    })
+  }
+
+  function cerrarEdicion() {
+    setEdicion(EDICION_VACIA)
+  }
+
+  async function handleGuardarEdicion() {
+    const { venta, mecanicoId, metodoPago, clienteNombre, ajusteFactura, montoFactura } = edicion
+    if (!mecanicoId) return setEdicion((d) => ({ ...d, error: 'Selecciona un mecánico.' }))
+    if (ajusteFactura && (!montoFactura || Number(montoFactura) <= 0)) {
+      return setEdicion((d) => ({ ...d, error: 'Indica el monto real que pagó el cliente.' }))
+    }
+
+    setEdicion((d) => ({ ...d, guardando: true, error: '' }))
+
+    const { error } = await supabase.rpc('editar_venta', {
+      p_venta_id: venta.id,
+      p_mecanico_id: mecanicoId,
+      p_metodo_pago: metodoPago,
+      p_cliente_nombre: clienteNombre,
+      p_monto_factura: ajusteFactura && montoFactura ? Number(montoFactura) : null,
+    })
+
+    if (error) {
+      setEdicion((d) => ({ ...d, guardando: false, error: error.message }))
+      return
+    }
+
+    cerrarEdicion()
+    cargarVentas()
+  }
+
   const folioNormalizado = busquedaFolio.trim().toUpperCase()
   const ventasFiltradas = folioNormalizado
     ? ventas.filter((v) => v.id.slice(0, 8).toUpperCase().includes(folioNormalizado))
@@ -259,15 +327,24 @@ export default function HistorialVentasPage() {
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-white">{new Date(v.fecha_hora).toLocaleString('es-CO')}</p>
                     <p className="text-xs text-muted">
-                      Folio: <span className="font-mono">{v.id.slice(0, 8).toUpperCase()}</span> · Mecánico:{' '}
-                      {v.mecanico?.nombre ?? '—'} · Pago: {v.metodo_pago} · Registró:{' '}
-                      {v.registrador?.nombre_completo ?? '—'}
+                      Folio: <span className="font-mono">{v.id.slice(0, 8).toUpperCase()}</span> · Mecánico
+                      {v.venta_mecanicos_extra?.length > 0 && 's'}: {v.mecanico?.nombre ?? '—'}
+                      {v.venta_mecanicos_extra?.map((e, i) => (
+                        <span key={i}>, {e.mecanico?.nombre ?? '—'}</span>
+                      ))}{' '}
+                      · Pago: {v.metodo_pago} · Registró: {v.registrador?.nombre_completo ?? '—'}
                       {v.cliente_nombre && ` · Cliente: ${v.cliente_nombre}`}
                     </p>
                     <p className="text-xs text-muted/70">
-                      Costo ${Number(v.costo_total).toLocaleString('es-CO')} · Mecánico $
-                      {Number(v.monto_mecanico).toLocaleString('es-CO')} · {nombreSocio1} $
-                      {Number(v.monto_duena).toLocaleString('es-CO')} · {nombreSocio2} $
+                      Costo ${Number(v.costo_total).toLocaleString('es-CO')} · {v.mecanico?.nombre ?? 'Mecánico'} $
+                      {Number(v.monto_mecanico).toLocaleString('es-CO')}
+                      {v.venta_mecanicos_extra?.map((e, i) => (
+                        <span key={i}>
+                          {' '}
+                          · {e.mecanico?.nombre ?? 'Mecánico'} ${Number(e.monto).toLocaleString('es-CO')}
+                        </span>
+                      ))}{' '}
+                      · {nombreSocio1} ${Number(v.monto_duena).toLocaleString('es-CO')} · {nombreSocio2} $
                       {Number(v.monto_socio).toLocaleString('es-CO')}
                     </p>
                   </div>
@@ -290,6 +367,13 @@ export default function HistorialVentasPage() {
                       >
                         <Undo2 size={13} />
                         Devolución
+                      </button>
+                      <button
+                        onClick={() => handleAbrirEdicion(v)}
+                        className="flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-xs text-white/70 hover:bg-white/8 hover:text-white"
+                      >
+                        <Pencil size={13} />
+                        Editar
                       </button>
                     </div>
                   </div>
@@ -447,6 +531,108 @@ export default function HistorialVentasPage() {
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {edicion.abierta && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="w-full max-w-sm rounded-2xl border border-white/8 bg-surface p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="font-display text-base text-white">
+                Editar venta — {edicion.venta?.id.slice(0, 8).toUpperCase()}
+              </h2>
+              <button onClick={cerrarEdicion} className="rounded-lg p-1 text-muted hover:bg-white/8 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+
+            <p className="mb-3 text-xs text-muted">
+              Solo se puede corregir el mecánico, método de pago, cliente y monto de factura — el monto total y los
+              productos de una venta ya registrada no se editan aquí. Si el monto o los productos están mal, usa
+              "Devolución" en su lugar.
+            </p>
+
+            <div className="space-y-3">
+              <label className="block">
+                <span className="mb-1 block text-xs uppercase tracking-wide text-muted">Mecánico</span>
+                <select
+                  value={edicion.mecanicoId}
+                  onChange={(e) => setEdicion((d) => ({ ...d, mecanicoId: e.target.value, error: '' }))}
+                  className="input"
+                >
+                  <option value="">Selecciona…</option>
+                  {mecanicos.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.nombre}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="mb-1 block text-xs uppercase tracking-wide text-muted">Método de pago</span>
+                <select
+                  value={edicion.metodoPago}
+                  onChange={(e) => setEdicion((d) => ({ ...d, metodoPago: e.target.value }))}
+                  className="input"
+                >
+                  {METODOS_PAGO.map((m) => (
+                    <option key={m.value} value={m.value}>
+                      {m.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="mb-1 block text-xs uppercase tracking-wide text-muted">Cliente (opcional)</span>
+                <input
+                  value={edicion.clienteNombre}
+                  onChange={(e) => setEdicion((d) => ({ ...d, clienteNombre: e.target.value }))}
+                  className="input"
+                  placeholder="Nombre del cliente"
+                />
+              </label>
+
+              {edicion.ajusteFactura ? (
+                <label className="block">
+                  <span className="mb-1 block text-xs uppercase tracking-wide text-muted">
+                    Monto real que pagó el cliente (va en la factura)
+                  </span>
+                  <MoneyInput
+                    value={edicion.montoFactura}
+                    onChange={(v) => setEdicion((d) => ({ ...d, montoFactura: v, error: '' }))}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEdicion((d) => ({ ...d, ajusteFactura: false, montoFactura: '' }))}
+                    className="mt-1 text-[11px] text-white/50 underline decoration-dotted hover:text-white"
+                  >
+                    Cancelar, es el mismo monto
+                  </button>
+                </label>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setEdicion((d) => ({ ...d, ajusteFactura: true }))}
+                  className="text-[11px] text-white/50 underline decoration-dotted hover:text-white"
+                >
+                  ¿El cliente pagó un monto distinto al registrado?
+                </button>
+              )}
+
+              {edicion.error && (
+                <p className="flex items-center gap-2 rounded-lg bg-brand-700/15 px-3 py-2 text-sm text-brand-400 ring-1 ring-brand-700/30">
+                  <TriangleAlert size={16} className="shrink-0" />
+                  {edicion.error}
+                </p>
+              )}
+
+              <button onClick={handleGuardarEdicion} disabled={edicion.guardando} className="btn-primary w-full">
+                {edicion.guardando ? 'Guardando…' : 'Guardar cambios'}
+              </button>
+            </div>
           </div>
         </div>
       )}

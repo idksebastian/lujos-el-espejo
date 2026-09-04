@@ -21,7 +21,8 @@ export default function NuevaVentaPage() {
   const [mecanicos, setMecanicos] = useState([])
   const [items, setItems] = useState([])
   const [montoTotal, setMontoTotal] = useState('')
-  const [mecanicoId, setMecanicoId] = useState('')
+  const [mecanicoIds, setMecanicoIds] = useState([])
+  const [mecanicoMontos, setMecanicoMontos] = useState({})
   const [metodoPago, setMetodoPago] = useState('efectivo')
   const [clienteNombre, setClienteNombre] = useState('')
   const [scannerOpen, setScannerOpen] = useState(false)
@@ -70,6 +71,7 @@ export default function NuevaVentaPage() {
           producto_id: producto.id,
           nombre: producto.nombre,
           costo: Number(producto.costo),
+          precioSugerido: producto.precio_sugerido != null ? Number(producto.precio_sugerido) : null,
           stockDisponible: producto.stock_actual,
           cantidad: 1,
         },
@@ -82,7 +84,7 @@ export default function NuevaVentaPage() {
     setAvisoScan('')
     const { data, error } = await supabase
       .from('productos')
-      .select('id, nombre, costo, stock_actual')
+      .select('id, nombre, costo, precio_sugerido, stock_actual')
       .eq('codigo_barras', codigo)
       .eq('activo', true)
       .maybeSingle()
@@ -145,6 +147,20 @@ export default function NuevaVentaPage() {
     setExternos((prev) => prev.filter((e) => e.id !== id))
   }
 
+  function toggleMecanico(id) {
+    setError('')
+    setMecanicoIds((prev) => {
+      if (prev.includes(id)) {
+        setMecanicoMontos((m) => {
+          const { [id]: _quitado, ...resto } = m
+          return resto
+        })
+        return prev.filter((x) => x !== id)
+      }
+      return [...prev, id]
+    })
+  }
+
   const costoTotal = items.reduce((sum, it) => sum + it.costo * it.cantidad, 0)
   const montoTotalNum = Number(montoTotal) || 0
   const preview = calcularReparto(montoTotalNum, costoTotal)
@@ -152,6 +168,23 @@ export default function NuevaVentaPage() {
   const montoCobrado = ajusteFactura && montoFacturaNum > 0 ? montoFacturaNum : montoTotalNum
   const pagaConNum = Number(pagaCon) || 0
   const vuelto = pagaConNum - montoCobrado
+
+  // Cuando hay 2+ mecánicos: todos menos el último tienen un monto propio
+  // (el "chanchullo" de Santiago, por ejemplo); el último se lleva lo que
+  // sobra del total a repartir entre mecánicos — así la suma siempre cuadra
+  // exacto sin que el usuario tenga que calcular nada.
+  const mecanicosConMonto =
+    mecanicoIds.length > 1
+      ? (() => {
+          const explicitos = mecanicoIds.slice(0, -1)
+          const sumaExplicitos = explicitos.reduce((s, id) => s + (Number(mecanicoMontos[id]) || 0), 0)
+          const idResto = mecanicoIds[mecanicoIds.length - 1]
+          return [
+            ...explicitos.map((id) => ({ id, monto: Number(mecanicoMontos[id]) || 0, editable: true })),
+            { id: idResto, monto: Math.max(preview.montoMecanico - sumaExplicitos, 0), editable: false },
+          ]
+        })()
+      : []
 
   function resetFormulario() {
     setItems([])
@@ -164,7 +197,8 @@ export default function NuevaVentaPage() {
     setNuevoExternoPrecio('')
     setNuevoExternoReparto('ambos')
     setMontoTotal('')
-    setMecanicoId('')
+    setMecanicoIds([])
+    setMecanicoMontos({})
     setMetodoPago('efectivo')
     setClienteNombre('')
     setVentaConfirmada(null)
@@ -185,19 +219,38 @@ export default function NuevaVentaPage() {
       return setError('Agrega al menos un producto, un servicio especial o un repuesto externo a la venta')
     }
     if (!montoTotalNum || montoTotalNum <= 0) return setError('El monto total pagado debe ser mayor a $0')
-    if (!mecanicoId) return setError('Selecciona el mecánico que atendió esta venta')
+    if (mecanicoIds.length === 0) return setError('Selecciona el o los mecánicos que atendieron esta venta')
     if (ajusteFactura && montoFacturaNum <= 0) return setError('Indica el monto real que pagó el cliente')
+
+    if (mecanicoIds.length > 1) {
+      const sumaMecanicos = mecanicosConMonto.reduce((s, m) => s + m.monto, 0)
+      if (Math.round(sumaMecanicos * 100) !== Math.round(preview.montoMecanico * 100)) {
+        return setError('Los montos de los mecánicos no cuadran con el total a repartir entre mecánicos')
+      }
+      const negativo = mecanicosConMonto.find((m) => m.monto < 0)
+      if (negativo) return setError('Los montos asignados a los mecánicos superan lo que hay para repartir')
+    }
 
     const excedeStock = items.find((it) => it.cantidad > it.stockDisponible)
     if (excedeStock) {
       return setError(`No hay suficiente stock de "${excedeStock.nombre}" (disponible: ${excedeStock.stockDisponible})`)
     }
 
+    // El último mecánico seleccionado es quien recibe "el resto" del total
+    // a repartir entre mecánicos; los demás llevan un monto propio (el
+    // "chanchullo" de turno). Con un solo mecánico, es exactamente lo de
+    // siempre: se lleva el 100% del cálculo automático.
+    const mecanicoIdPrincipal = mecanicoIds[mecanicoIds.length - 1]
+    const mecanicosExtra =
+      mecanicoIds.length > 1
+        ? mecanicosConMonto.filter((m) => m.editable).map((m) => ({ mecanico_id: m.id, monto: m.monto }))
+        : []
+
     setEnviando(true)
     try {
       const { data: ventaId, error } = await supabase.rpc('registrar_venta', {
         p_monto_total: montoTotalNum,
-        p_mecanico_id: mecanicoId,
+        p_mecanico_id: mecanicoIdPrincipal,
         p_metodo_pago: metodoPago,
         p_cliente_nombre: clienteNombre || null,
         p_items: items.map((it) => ({ producto_id: it.producto_id, cantidad: it.cantidad })),
@@ -209,6 +262,7 @@ export default function NuevaVentaPage() {
           precio_venta: ex.precioVenta,
           reparto_gasto: ex.reparto,
         })),
+        p_mecanicos_extra: mecanicosExtra,
       })
 
       if (error) throw error
@@ -333,7 +387,14 @@ export default function NuevaVentaPage() {
               return (
                 <li key={it.producto_id} className="bg-black/20 px-3 py-2">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="min-w-0 flex-1 truncate text-sm text-white">{it.nombre}</span>
+                    <span className="min-w-0 flex-1 truncate text-sm text-white">
+                      {it.nombre}
+                      {it.precioSugerido != null && (
+                        <span className="ml-1.5 text-xs text-emerald-400">
+                          ${it.precioSugerido.toLocaleString('es-CO')} c/u
+                        </span>
+                      )}
+                    </span>
                     <input
                       type="number"
                       min="1"
@@ -546,17 +607,63 @@ export default function NuevaVentaPage() {
           </button>
         )}
 
-        <label className="block">
-          <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">Mecánico</span>
-          <select value={mecanicoId} onChange={(e) => setMecanicoId(e.target.value)} className="input">
-            <option value="">Selecciona…</option>
-            {mecanicos.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div>
+          <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">
+            Mecánico{mecanicoIds.length > 1 && 's'}
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {mecanicos.map((m) => {
+              const seleccionado = mecanicoIds.includes(m.id)
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => toggleMecanico(m.id)}
+                  className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                    seleccionado ? 'border-brand-600 bg-brand-600/15 text-white' : 'border-white/10 text-white/60 hover:text-white'
+                  }`}
+                >
+                  {m.nombre}
+                </button>
+              )
+            })}
+          </div>
+          {mecanicoIds.length === 0 && (
+            <p className="mt-1.5 text-[11px] text-muted">Selecciona uno; si dos trabajaron en el arreglo, elige ambos.</p>
+          )}
+
+          {mecanicoIds.length > 1 && (
+            <div className="mt-3 space-y-2 rounded-lg border border-white/10 p-3">
+              <p className="text-[11px] text-muted">
+                Cuánto le corresponde a cada uno — total a repartir entre mecánicos: $
+                {preview.montoMecanico.toLocaleString('es-CO')}
+              </p>
+              {mecanicosConMonto.map((m) => {
+                const nombre = mecanicos.find((mec) => mec.id === m.id)?.nombre ?? '—'
+                return (
+                  <div key={m.id} className="flex items-center justify-between gap-2">
+                    <span className="text-sm text-white">
+                      {nombre}
+                      {!m.editable && <span className="text-muted"> (recibe el resto)</span>}
+                    </span>
+                    {m.editable ? (
+                      <MoneyInput
+                        value={mecanicoMontos[m.id] ?? ''}
+                        onChange={(v) => setMecanicoMontos((prev) => ({ ...prev, [m.id]: v }))}
+                        placeholder="0"
+                        className="w-32"
+                      />
+                    ) : (
+                      <span className={`text-sm font-medium ${m.monto < 0 ? 'text-brand-400' : 'text-white'}`}>
+                        ${m.monto.toLocaleString('es-CO')}
+                      </span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
 
         <label className="block">
           <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">Método de pago</span>

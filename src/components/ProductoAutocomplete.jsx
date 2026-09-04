@@ -13,7 +13,7 @@ export default function ProductoAutocomplete({ onSelect }) {
   useEffect(() => {
     supabase
       .from('productos')
-      .select('id, nombre, costo, stock_actual, codigo_barras')
+      .select('id, nombre, costo, precio_sugerido, stock_actual, codigo_barras')
       .eq('activo', true)
       .order('nombre')
       .then(({ data, error }) => {
@@ -55,8 +55,13 @@ export default function ProductoAutocomplete({ onSelect }) {
                 onClick={() => elegir(p)}
                 className="flex w-full items-center justify-between px-3 py-2 text-left text-sm text-white hover:bg-white/8"
               >
-                <span className="truncate">{p.nombre}</span>
-                <span className="ml-2 shrink-0 text-xs text-muted">stock {p.stock_actual}</span>
+                <span className="min-w-0 flex-1 truncate">{p.nombre}</span>
+                <span className="ml-2 flex shrink-0 flex-col items-end text-xs">
+                  {p.precio_sugerido != null && (
+                    <span className="text-emerald-400">${Number(p.precio_sugerido).toLocaleString('es-CO')}</span>
+                  )}
+                  <span className="text-muted">stock {p.stock_actual}</span>
+                </span>
               </button>
             </li>
           ))}
