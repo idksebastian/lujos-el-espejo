@@ -217,7 +217,6 @@ export default function HistorialVentasPage() {
 
   async function handleGuardarEdicion() {
     const { venta, mecanicoId, metodoPago, clienteNombre, ajusteFactura, montoFactura } = edicion
-    if (!mecanicoId) return setEdicion((d) => ({ ...d, error: 'Selecciona un mecánico.' }))
     if (ajusteFactura && (!montoFactura || Number(montoFactura) <= 0)) {
       return setEdicion((d) => ({ ...d, error: 'Indica el monto real que pagó el cliente.' }))
     }
@@ -226,7 +225,7 @@ export default function HistorialVentasPage() {
 
     const { error } = await supabase.rpc('editar_venta', {
       p_venta_id: venta.id,
-      p_mecanico_id: mecanicoId,
+      p_mecanico_id: mecanicoId || null,
       p_metodo_pago: metodoPago,
       p_cliente_nombre: clienteNombre,
       p_monto_factura: ajusteFactura && montoFactura ? Number(montoFactura) : null,
@@ -561,7 +560,7 @@ export default function HistorialVentasPage() {
                   onChange={(e) => setEdicion((d) => ({ ...d, mecanicoId: e.target.value, error: '' }))}
                   className="input"
                 >
-                  <option value="">Selecciona…</option>
+                  <option value="">Ninguno (venta sin instalación)</option>
                   {mecanicos.map((m) => (
                     <option key={m.id} value={m.id}>
                       {m.nombre}

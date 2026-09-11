@@ -163,7 +163,7 @@ export default function NuevaVentaPage() {
 
   const costoTotal = items.reduce((sum, it) => sum + it.costo * it.cantidad, 0)
   const montoTotalNum = Number(montoTotal) || 0
-  const preview = calcularReparto(montoTotalNum, costoTotal)
+  const preview = calcularReparto(montoTotalNum, costoTotal, mecanicoIds.length > 0)
   const montoFacturaNum = Number(montoFactura) || 0
   const montoCobrado = ajusteFactura && montoFacturaNum > 0 ? montoFacturaNum : montoTotalNum
   const pagaConNum = Number(pagaCon) || 0
@@ -219,7 +219,6 @@ export default function NuevaVentaPage() {
       return setError('Agrega al menos un producto, un servicio especial o un repuesto externo a la venta')
     }
     if (!montoTotalNum || montoTotalNum <= 0) return setError('El monto total pagado debe ser mayor a $0')
-    if (mecanicoIds.length === 0) return setError('Selecciona el o los mecánicos que atendieron esta venta')
     if (ajusteFactura && montoFacturaNum <= 0) return setError('Indica el monto real que pagó el cliente')
 
     if (mecanicoIds.length > 1) {
@@ -240,7 +239,7 @@ export default function NuevaVentaPage() {
     // a repartir entre mecánicos; los demás llevan un monto propio (el
     // "chanchullo" de turno). Con un solo mecánico, es exactamente lo de
     // siempre: se lleva el 100% del cálculo automático.
-    const mecanicoIdPrincipal = mecanicoIds[mecanicoIds.length - 1]
+    const mecanicoIdPrincipal = mecanicoIds.length > 0 ? mecanicoIds[mecanicoIds.length - 1] : null
     const mecanicosExtra =
       mecanicoIds.length > 1
         ? mecanicosConMonto.filter((m) => m.editable).map((m) => ({ mecanico_id: m.id, monto: m.monto }))
@@ -629,7 +628,10 @@ export default function NuevaVentaPage() {
             })}
           </div>
           {mecanicoIds.length === 0 && (
-            <p className="mt-1.5 text-[11px] text-muted">Selecciona uno; si dos trabajaron en el arreglo, elige ambos.</p>
+            <p className="mt-1.5 text-[11px] text-muted">
+              Opcional — si dos trabajaron en el arreglo, elige ambos. Si es un producto que se vendió sin
+              instalarlo, deja esto sin marcar.
+            </p>
           )}
 
           {mecanicoIds.length > 1 && (
@@ -694,10 +696,25 @@ export default function NuevaVentaPage() {
             </div>
             <p className="mb-2 text-[11px] text-muted">Costo de productos: ${costoTotal.toLocaleString('es-CO')}</p>
             <div className="grid grid-cols-3 gap-2">
-              <RepartoItem label="Mecánico" pct="50%" valor={preview.montoMecanico} color="bg-sky-500" />
-              <RepartoItem label={nombreSocio1} pct="25%" valor={preview.montoDuena} color="bg-amber-500" />
-              <RepartoItem label={nombreSocio2} pct="25%" valor={preview.montoSocio} color="bg-emerald-500" />
+              <RepartoItem label="Mecánico" pct={mecanicoIds.length > 0 ? '50%' : '0%'} valor={preview.montoMecanico} color="bg-sky-500" />
+              <RepartoItem
+                label={nombreSocio1}
+                pct={mecanicoIds.length > 0 ? '25%' : '50%'}
+                valor={preview.montoDuena}
+                color="bg-amber-500"
+              />
+              <RepartoItem
+                label={nombreSocio2}
+                pct={mecanicoIds.length > 0 ? '25%' : '50%'}
+                valor={preview.montoSocio}
+                color="bg-emerald-500"
+              />
             </div>
+            {mecanicoIds.length === 0 && (
+              <p className="mt-2 text-[11px] text-muted">
+                Sin mecánico asignado: toda la ganancia queda para {nombreSocio1} y {nombreSocio2}.
+              </p>
+            )}
           </div>
         )}
 
