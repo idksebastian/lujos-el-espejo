@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Download, TriangleAlert, DollarSign, Receipt, Wrench, Undo2, Camera, ChevronDown, PackageSearch, Wallet } from 'lucide-react'
+import { Download, TriangleAlert, DollarSign, Receipt, Wrench, Undo2, Camera, ChevronDown, PackageSearch, Wallet, Trash2 } from 'lucide-react'
 import { supabase } from '../../lib/supabaseClient'
 import { rangoDiaLocal } from '../../lib/fechas'
 import { generarCierrePng } from '../../lib/recibo'
@@ -25,6 +25,28 @@ export default function CierreDiaPage() {
   const [cierreBlob, setCierreBlob] = useState(null)
   const [scannerOpen, setScannerOpen] = useState(false)
   const [mostrarSinVentas, setMostrarSinVentas] = useState(false)
+  const [eliminandoId, setEliminandoId] = useState(null)
+
+  async function handleEliminarVenta(venta) {
+    if (
+      !window.confirm(
+        `¿Eliminar esta venta (${venta.hora} · $${venta.montoTotal.toLocaleString('es-CO')})? Se devuelve el stock de los productos y no se puede deshacer.`
+      )
+    ) {
+      return
+    }
+
+    setEliminandoId(venta.id)
+    setError('')
+    const { error: err } = await supabase.rpc('eliminar_venta', { p_venta_id: venta.id })
+    setEliminandoId(null)
+
+    if (err) {
+      setError(err.message)
+      return
+    }
+    handleGenerar(fecha)
+  }
 
   async function handleGenerar(fechaParam) {
     const f = fechaParam ?? fecha
@@ -427,7 +449,18 @@ export default function CierreDiaPage() {
                   <div key={v.id} className="rounded-xl border border-white/8 bg-white/2 p-3">
                     <div className="mb-2 flex items-center justify-between gap-2">
                       <p className="text-sm font-medium text-white">{v.hora}</p>
-                      <p className="text-sm font-semibold text-white">${v.montoTotal.toLocaleString('es-CO')}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-white">${v.montoTotal.toLocaleString('es-CO')}</p>
+                        <button
+                          type="button"
+                          onClick={() => handleEliminarVenta(v)}
+                          disabled={eliminandoId === v.id}
+                          className="rounded-md p-1 text-muted hover:bg-brand-700/15 hover:text-brand-400 disabled:opacity-50"
+                          aria-label="Eliminar venta"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </div>
                     <div className="mb-2 flex flex-wrap gap-1.5">
                       <span className="rounded-full bg-white/5 px-2 py-0.5 text-xs text-muted">{v.mecanico}</span>
