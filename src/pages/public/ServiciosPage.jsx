@@ -1,0 +1,57 @@
+import { MessageCircle } from 'lucide-react'
+import Reveal from '../../components/public/Reveal'
+import { SERVICIOS_GENERALES, WHATSAPP_HREF } from '../../lib/publicContent'
+
+export default function ServiciosPage() {
+  return (
+    <div>
+      <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-20">
+        <Reveal>
+          <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl" style={{ textWrap: 'balance' }}>
+            Otros servicios para tu vehículo
+          </h1>
+          <p className="mx-auto mt-4 max-w-lg text-base text-muted">
+            Además de lunas, resolvemos lo demás que necesita tu carro o moto en el día a día.
+          </p>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 pb-16">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {SERVICIOS_GENERALES.map((s, i) => (
+            <Reveal key={s.nombre} delay={i * 60}>
+              <div className="card flex h-full flex-col p-5">
+                <p className="text-base font-semibold text-white">{s.nombre}</p>
+                <p className="mt-1.5 text-sm text-muted">{s.desc}</p>
+                <a
+                  href={WHATSAPP_HREF}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-4 inline-flex w-fit items-center gap-1.5 text-sm font-medium text-brand-500 hover:text-brand-400"
+                >
+                  <MessageCircle size={14} />
+                  Preguntar por WhatsApp
+                </a>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-5 py-14 text-center">
+        <Reveal>
+          <h2 className="font-display text-2xl text-white" style={{ textWrap: 'balance' }}>
+            ¿No encuentras lo que buscas?
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted">
+            Escríbenos por WhatsApp — manejamos más referencias de las que alcanzamos a mostrar aquí.
+          </p>
+          <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
+            <MessageCircle size={16} />
+            Escríbenos por WhatsApp
+          </a>
+        </Reveal>
+      </section>
+    </div>
+  )
+}

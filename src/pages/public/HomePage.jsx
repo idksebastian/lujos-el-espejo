@@ -1,0 +1,192 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { MessageCircle, MapPin, ArrowUpRight, Sparkles } from 'lucide-react'
+import Reveal from '../../components/public/Reveal'
+import { CATEGORIAS, DIRECCION, WHATSAPP_HREF, buildJsonLd } from '../../lib/publicContent'
+
+function HeroMedia() {
+  const [videoError, setVideoError] = useState(false)
+
+  if (videoError) {
+    return <div className="absolute inset-0 bg-linear-to-b from-brand-700/25 via-ink to-ink" />
+  }
+
+  return (
+    <>
+      {/* Se activa solo si existe /hero.mp4 — si no, cae al degradado de
+          arriba sin romper nada. Para poner un video real: exporta un clip
+          corto (10-20s) de trabajo real en el taller, sin audio importante
+          (queda muteado), y guárdalo como public/hero.mp4. */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/logo.jpg"
+        onError={() => setVideoError(true)}
+        className="absolute inset-0 size-full object-cover opacity-40"
+      >
+        <source src="/hero.mp4" type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 bg-linear-to-b from-ink/60 via-ink/70 to-ink" />
+    </>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <div>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd()) }} />
+
+      <section className="relative overflow-hidden">
+        <HeroMedia />
+        <div className="relative mx-auto max-w-3xl px-5 py-20 text-center sm:py-28">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-brand-500">
+            Barrio La Victoria · Pereira
+          </p>
+          <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl" style={{ textWrap: 'balance' }}>
+            Lujos y accesorios para tu carro
+          </h1>
+          <p className="mx-auto mt-4 max-w-lg text-base text-muted">
+            Especialistas en lunas para carro y moto — más plumillas, bombillería, seguros e identicar. Hacemos envíos
+            nacionales y domicilios.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary">
+              <MessageCircle size={16} />
+              Escríbenos por WhatsApp
+            </a>
+            <Link to="/lunas" className="btn-secondary">
+              Ver lunas
+            </Link>
+          </div>
+
+          <div className="mx-auto mt-14 flex max-w-md items-center justify-center gap-8 border-t border-white/8 pt-8">
+            <div>
+              <p className="font-display text-2xl text-white">414+</p>
+              <p className="text-xs text-muted">Seguidores en TikTok</p>
+            </div>
+            <div className="h-8 w-px bg-white/10" />
+            <div>
+              <p className="font-display text-2xl text-white">1.6K</p>
+              <p className="text-xs text-muted">Me gusta</p>
+            </div>
+            <div className="h-8 w-px bg-white/10" />
+            <div>
+              <p className="font-display text-2xl text-white">98K</p>
+              <p className="text-xs text-muted">Vistas en un video</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-5 py-14 text-center">
+        <Reveal>
+          <span className="mx-auto mb-3 flex size-10 items-center justify-center rounded-full bg-brand-600/15 text-brand-500">
+            <Sparkles size={18} />
+          </span>
+          <h2 className="font-display text-2xl text-white">¿Qué se le dañó a tu carro?</h2>
+          <p className="mx-auto mt-3 max-w-xl text-sm text-muted">
+            Si se te rompió una luna, se te fundió un bombillo o necesitas cambiar las plumillas, aquí lo
+            resolvemos. Y si no lo tenemos en el momento, te lo conseguimos.
+          </p>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 py-14">
+        <Reveal>
+          <h2 className="font-display text-2xl text-white">Encuentra tu solución</h2>
+        </Reveal>
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {CATEGORIAS.map((c, i) => (
+            <Reveal key={c.nombre} delay={i * 60}>
+              <Link
+                to={`/${c.slug}`}
+                className={`card group flex h-full flex-col p-5 transition hover:-translate-y-0.5 hover:border-brand-600/50 ${c.destacado ? 'ring-1 ring-brand-600/40' : ''}`}
+              >
+                {c.destacado && (
+                  <span className="mb-2 inline-block w-fit rounded-full bg-brand-600/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-brand-500">
+                    Especialidad
+                  </span>
+                )}
+                <p className="text-base font-semibold text-white">{c.nombre}</p>
+                <p className="mt-1.5 text-sm text-muted">{c.desc}</p>
+                <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-brand-500 group-hover:text-brand-400">
+                  Ver más
+                  <ArrowUpRight size={14} />
+                </span>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 py-14">
+        <Reveal>
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="font-display text-2xl text-white">Nuestro trabajo</h2>
+            <Link
+              to="/productos"
+              className="hidden shrink-0 items-center gap-1 text-sm font-medium text-brand-500 hover:text-brand-400 sm:inline-flex"
+            >
+              Ver más fotos
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
+        </Reveal>
+        <Reveal delay={80}>
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {[0, 1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="aspect-square rounded-xl border border-white/8 bg-linear-to-br from-surface to-surface-2"
+              />
+            ))}
+          </div>
+          <Link
+            to="/productos"
+            className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-brand-500 hover:text-brand-400 sm:hidden"
+          >
+            Ver más fotos
+            <ArrowUpRight size={14} />
+          </Link>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-5xl px-5 py-14">
+        <Reveal>
+          <div className="card flex flex-col items-start justify-between gap-4 p-6 sm:flex-row sm:items-center">
+            <div className="flex items-start gap-3">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-brand-600/15 text-brand-500">
+                <MapPin size={18} />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-white">{DIRECCION}</p>
+                <p className="text-sm text-muted">Lunes a sábado, 8:00 a.m. – 5:00 p.m.</p>
+              </div>
+            </div>
+            <Link to="/contacto" className="btn-secondary shrink-0">
+              Ver ubicación
+              <ArrowUpRight size={14} />
+            </Link>
+          </div>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-5 py-14 text-center">
+        <Reveal>
+          <h2 className="font-display text-2xl text-white" style={{ textWrap: 'balance' }}>
+            ¿Necesitas una luna, un repuesto o un consejo?
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted">
+            Escríbenos por WhatsApp y te respondemos rápido — decinos la marca, línea y año de tu vehículo.
+          </p>
+          <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
+            <MessageCircle size={16} />
+            Escríbenos por WhatsApp
+          </a>
+        </Reveal>
+      </section>
+    </div>
+  )
+}

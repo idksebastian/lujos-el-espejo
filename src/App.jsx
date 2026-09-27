@@ -3,7 +3,12 @@ import { AuthProvider } from './contexts/AuthContext'
 import { ConfiguracionProvider } from './contexts/ConfiguracionContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Layout from './components/Layout'
-import LandingPage from './pages/LandingPage'
+import PublicLayout from './pages/public/PublicLayout'
+import HomePage from './pages/public/HomePage'
+import LunasPage from './pages/public/LunasPage'
+import ServiciosPage from './pages/public/ServiciosPage'
+import ProductosPage from './pages/public/ProductosPage'
+import ContactoPage from './pages/public/ContactoPage'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import InventarioPage from './pages/inventario/InventarioPage'
@@ -22,7 +27,13 @@ export default function App() {
       <AuthProvider>
         <ConfiguracionProvider>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route element={<PublicLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/lunas" element={<LunasPage />} />
+              <Route path="/servicios" element={<ServiciosPage />} />
+              <Route path="/productos" element={<ProductosPage />} />
+              <Route path="/contacto" element={<ContactoPage />} />
+            </Route>
             <Route path="/admin/login" element={<Login />} />
 
             <Route element={<ProtectedRoute />}>
