@@ -2,13 +2,30 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { MessageCircle, MapPin, ArrowUpRight, Sparkles } from 'lucide-react'
 import Reveal from '../../components/public/Reveal'
+import LineWaves from '../../components/public/LineWaves'
 import { CATEGORIAS, DIRECCION, WHATSAPP_HREF, buildJsonLd } from '../../lib/publicContent'
 
 function HeroMedia() {
   const [videoError, setVideoError] = useState(false)
 
   if (videoError) {
-    return <div className="absolute inset-0 bg-linear-to-b from-brand-700/25 via-ink to-ink" />
+    return (
+      <div className="absolute inset-0 bg-ink">
+        <div className="absolute inset-0 opacity-35">
+          <LineWaves
+            speed={0.2}
+            rotation={-30}
+            brightness={0.18}
+            warpIntensity={0.7}
+            color1="#e01a2b"
+            color2="#8c0c18"
+            color3="#ffffff"
+            enableMouseInteraction={false}
+          />
+        </div>
+        <div className="absolute inset-0 bg-linear-to-b from-ink/50 via-ink/70 to-ink" />
+      </div>
+    )
   }
 
   return (
