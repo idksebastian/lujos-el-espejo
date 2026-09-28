@@ -2,7 +2,7 @@ import { useParams, Navigate, Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import Reveal from '../../components/public/Reveal'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
-import { CATEGORIAS, whatsappHref } from '../../lib/publicContent'
+import { CATEGORIAS, whatsappHref, mensajeParaRuta } from '../../lib/publicContent'
 
 // Pasos genéricos válidos para cualquier servicio — hasta que el negocio
 // nos cuente el proceso real de cada uno (pendiente para la próxima
@@ -20,7 +20,7 @@ export default function ServicioDetallePage() {
 
   if (!servicio) return <Navigate to="/servicios" replace />
 
-  const whatsappServicio = whatsappHref(`Hola, quiero información sobre ${servicio.nombre.toLowerCase()}`)
+  const whatsappServicio = whatsappHref(mensajeParaRuta(servicio.path))
 
   return (
     <div>

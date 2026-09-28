@@ -9,7 +9,16 @@ export const DIRECCION = 'Cra 12 #29-02, Barrio La Victoria, Pereira, Risaralda'
 // direcciones colombianas de este formato (carrera/calle + número).
 export const MAPA_QUERY = encodeURIComponent('Cra 12 #29-02, Pereira, Colombia')
 
-export function whatsappHref(mensaje = 'Hola, quiero información sobre sus productos') {
+// Mensaje genérico para cuando no hay una página/problema específico detrás
+// del botón (ej. el header o el botón flotante en /, /contacto). No dice
+// literalmente "vengo de la página" — eso suena forzado viniendo de un
+// cliente real — pero tampoco es el típico "hola, tienen disponibilidad
+// de...". Habla en términos de problema/solución, que es como está armado
+// todo el sitio, así que quien lo lea del lado del negocio lo va a poder
+// distinguir de un mensaje que llega por cualquier otro medio.
+const MENSAJE_GENERICO = 'Hola, tengo un problema con mi carro y quiero que me ayuden a solucionarlo'
+
+export function whatsappHref(mensaje = MENSAJE_GENERICO) {
   return `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(mensaje)}`
 }
 
@@ -55,6 +64,31 @@ export const CATEGORIAS = [
 ]
 
 export const SERVICIOS_GENERALES = CATEGORIAS.filter((c) => c.grupo === 'servicios')
+
+// Da el mensaje de WhatsApp más específico posible según la página en la
+// que esté el visitante — así el botón de "Escríbenos" del header y el
+// flotante (que aparecen en todo el sitio) no mandan siempre el mismo
+// mensaje genérico, sino uno que coincide con lo que la persona estaba
+// viendo justo antes de escribir.
+export function mensajeParaRuta(pathname) {
+  const categoria = CATEGORIAS.find((c) => c.path === pathname)
+  if (!categoria) return MENSAJE_GENERICO
+  return categoria.grupo === 'lunas'
+    ? 'Hola, necesito cotizar una luna para mi vehículo'
+    : `Hola, quiero información sobre ${categoria.nombre.toLowerCase()}`
+}
+
+// Chips de "¿qué le pasó a tu carro?" — reemplazan el bloque de
+// estadísticas de TikTok en el hero. Cada uno abre WhatsApp con un mensaje
+// ya redactado según el problema puntual, en vez de mandar a todos al
+// mismo mensaje genérico.
+export const DIAGNOSTICO = [
+  { problema: 'Se me rompió el vidrio', mensaje: 'Hola, se me rompió el vidrio/luna de mi carro o moto y necesito una nueva' },
+  { problema: 'Se me fundió una luz', mensaje: 'Hola, se me fundió un bombillo/luz y necesito cambiarlo' },
+  { problema: 'Necesito cambiar las plumillas', mensaje: 'Hola, necesito cambiar las plumillas de mi carro' },
+  { problema: 'Quiero asegurar mi carro', mensaje: 'Hola, quiero asegurar los emblemas, antenas o lunas de mi carro para que no me los roben' },
+  { problema: 'Otro', mensaje: 'Hola, tengo un problema con mi carro y no estoy seguro qué necesito, ¿me pueden ayudar?' },
+]
 
 export function buildJsonLd() {
   return {

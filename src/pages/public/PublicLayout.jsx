@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
-import { WHATSAPP, WHATSAPP_HREF } from '../../lib/publicContent'
+import { WHATSAPP, whatsappHref, mensajeParaRuta } from '../../lib/publicContent'
 
 const NAV_LINKS = [
   { to: '/', label: 'Inicio', end: true },
@@ -29,6 +29,8 @@ function NavItem({ to, label, end, onClick }) {
 
 export default function PublicLayout() {
   const [menuAbierto, setMenuAbierto] = useState(false)
+  const location = useLocation()
+  const whatsappActual = whatsappHref(mensajeParaRuta(location.pathname))
 
   return (
     <div className="min-h-screen bg-ink text-white">
@@ -48,7 +50,7 @@ export default function PublicLayout() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary hidden sm:inline-flex">
+            <a href={whatsappActual} target="_blank" rel="noreferrer" className="btn-primary hidden sm:inline-flex">
               <WhatsAppIcon size={16} />
               Escríbenos
             </a>
@@ -68,7 +70,7 @@ export default function PublicLayout() {
             {NAV_LINKS.map((l) => (
               <NavItem key={l.to} {...l} onClick={() => setMenuAbierto(false)} />
             ))}
-            <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-1 inline-flex">
+            <a href={whatsappActual} target="_blank" rel="noreferrer" className="btn-primary mt-1 inline-flex">
               <WhatsAppIcon size={16} />
               Escríbenos por WhatsApp
             </a>
@@ -100,7 +102,7 @@ export default function PublicLayout() {
       </footer>
 
       <a
-        href={WHATSAPP_HREF}
+        href={whatsappActual}
         target="_blank"
         rel="noreferrer"
         aria-label="Escríbenos por WhatsApp"

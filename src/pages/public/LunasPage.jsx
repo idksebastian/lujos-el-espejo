@@ -1,9 +1,9 @@
 import { Car, Search, PackageCheck } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
-import { whatsappHref } from '../../lib/publicContent'
+import { whatsappHref, mensajeParaRuta } from '../../lib/publicContent'
 
-const WHATSAPP_LUNAS = whatsappHref('Hola, necesito cotizar una luna para mi vehículo')
+const WHATSAPP_LUNAS = whatsappHref(mensajeParaRuta('/lunas'))
 
 const PASOS = [
   {

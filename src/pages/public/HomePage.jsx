@@ -4,7 +4,7 @@ import { MapPin, ArrowUpRight, Sparkles } from 'lucide-react'
 import Reveal from '../../components/public/Reveal'
 import LineWaves from '../../components/public/LineWaves'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
-import { CATEGORIAS, DIRECCION, WHATSAPP_HREF, buildJsonLd } from '../../lib/publicContent'
+import { CATEGORIAS, DIAGNOSTICO, DIRECCION, WHATSAPP_HREF, buildJsonLd, whatsappHref } from '../../lib/publicContent'
 
 function HeroMedia() {
   const [videoError, setVideoError] = useState(false)
@@ -82,20 +82,20 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="mx-auto mt-14 flex max-w-md items-center justify-center gap-8 border-t border-white/8 pt-8">
-            <div>
-              <p className="font-display text-2xl text-white">414+</p>
-              <p className="text-xs text-muted">Seguidores en TikTok</p>
-            </div>
-            <div className="h-8 w-px bg-white/10" />
-            <div>
-              <p className="font-display text-2xl text-white">1.6K</p>
-              <p className="text-xs text-muted">Me gusta</p>
-            </div>
-            <div className="h-8 w-px bg-white/10" />
-            <div>
-              <p className="font-display text-2xl text-white">98K</p>
-              <p className="text-xs text-muted">Vistas en un video</p>
+          <div className="mx-auto mt-14 max-w-lg border-t border-white/8 pt-7">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted">¿Qué le pasó a tu carro?</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {DIAGNOSTICO.map((d) => (
+                <a
+                  key={d.problema}
+                  href={whatsappHref(d.mensaje)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white transition hover:border-brand-500 hover:bg-brand-600/10"
+                >
+                  {d.problema}
+                </a>
+              ))}
             </div>
           </div>
         </div>
