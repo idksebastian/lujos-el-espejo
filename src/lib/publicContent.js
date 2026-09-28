@@ -87,7 +87,12 @@ export const DIAGNOSTICO = [
   { problema: 'Se me fundió una luz', mensaje: 'Hola, se me fundió un bombillo/luz y necesito cambiarlo' },
   { problema: 'Necesito cambiar las plumillas', mensaje: 'Hola, necesito cambiar las plumillas de mi carro' },
   { problema: 'Quiero asegurar mi carro', mensaje: 'Hola, quiero asegurar los emblemas, antenas o lunas de mi carro para que no me los roben' },
-  { problema: 'Otro', mensaje: 'Hola, tengo un problema con mi carro y no estoy seguro qué necesito, ¿me pueden ayudar?' },
+  {
+    problema: 'Quiero una cotización a medida',
+    mensaje:
+      'Hola, quiero una cotización a medida para un trabajo en mi vehículo (por ejemplo polarizado, instalación de luces o seguros)',
+  },
+  { problema: 'Otro', mensaje: 'Hola, tengo este problema con mi vehículo y quiero solucionarlo' },
 ]
 
 export function buildJsonLd() {

@@ -201,10 +201,10 @@ export default function HomePage() {
       <section className="mx-auto max-w-3xl px-5 py-14 text-center">
         <Reveal>
           <h2 className="font-display text-2xl text-white" style={{ textWrap: 'balance' }}>
-            ¿Necesitas una luna, un repuesto o un consejo?
+            ¿Necesitas una luna, un repuesto o una cotización a medida?
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-            Escríbenos por WhatsApp y te respondemos rápido — decinos la marca, línea y año de tu vehículo.
+            Escríbenos por WhatsApp y te respondemos rápido — dinos la marca, línea y año de tu vehículo.
           </p>
           <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
             <WhatsAppIcon size={16} />
