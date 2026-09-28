@@ -55,10 +55,10 @@ export function buildJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'AutomotiveBusiness',
-    name: 'Lujos El Espejo',
+    name: 'Lujos El Espejo 2',
     description:
       'Lunas para carro y moto, plumillas, bombillería, seguros e identicar, en el barrio La Victoria, Pereira.',
-    image: 'https://lujoselespejo.com/logo.jpg',
+    image: 'https://lujoselespejo.com/logo-horizontal.png',
     telephone: '+573202642451',
     address: {
       '@type': 'PostalAddress',

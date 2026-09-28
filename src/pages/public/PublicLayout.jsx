@@ -34,9 +34,9 @@ export default function PublicLayout() {
       <header className="sticky top-0 z-30 border-b border-white/8 bg-ink/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src="/logo.jpg" alt="Lujos El Espejo" className="size-9 rounded-lg" />
+            <img src="/logo-icon.png" alt="Lujos El Espejo 2" className="size-9 rounded-lg" />
             <span className="font-display text-lg font-semibold leading-none tracking-wide">
-              LUJOS <span className="text-brand-500">EL ESPEJO</span>
+              LUJOS EL ESPEJO <span className="text-brand-500">2</span>
             </span>
           </Link>
 
@@ -81,7 +81,7 @@ export default function PublicLayout() {
 
       <footer className="border-t border-white/8">
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-3 px-5 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
-          <p className="text-sm text-muted">© {new Date().getFullYear()} Lujos El Espejo</p>
+          <p className="text-sm text-muted">© {new Date().getFullYear()} Lujos El Espejo 2</p>
           <div className="flex items-center gap-4 text-sm text-muted">
             <a href={`tel:+${WHATSAPP}`} className="hover:text-white">
               +57 320 264 2451

@@ -77,7 +77,7 @@ export default function ContactoPage() {
             </div>
             <div className="overflow-hidden rounded-2xl border border-white/8">
               <iframe
-                title="Ubicación de Lujos El Espejo"
+                title="Ubicación de Lujos El Espejo 2"
                 src={`https://maps.google.com/maps?q=${MAPA_QUERY}&output=embed`}
                 className="h-72 w-full lg:h-full"
                 style={{ border: 0 }}
