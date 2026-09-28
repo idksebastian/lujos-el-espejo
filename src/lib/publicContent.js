@@ -92,7 +92,7 @@ export const DIAGNOSTICO = [
     mensaje:
       'Hola, quiero una cotización a medida para un trabajo en mi vehículo (por ejemplo polarizado, instalación de luces o seguros)',
   },
-  { problema: 'Otro', mensaje: 'Hola, tengo este problema con mi vehículo y quiero solucionarlo' },
+  { problema: 'Otro', mensaje: 'Hola, quiero solucionar un problema con mi vehículo. Necesito: ' },
 ]
 
 export function buildJsonLd() {
