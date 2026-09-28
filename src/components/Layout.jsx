@@ -11,6 +11,7 @@ import {
   Wrench,
   Users,
   Settings,
+  Image,
   LogOut,
   Menu,
   X,
@@ -29,6 +30,7 @@ const ADMIN_LINKS = [
   { to: '/admin/mecanicos', label: 'Mecánicos', icon: Wrench },
   { to: '/admin/usuarios', label: 'Usuarios', icon: Users },
   { to: '/admin/configuracion', label: 'Configuración', icon: Settings },
+  { to: '/admin/sitio-web', label: 'Página web', icon: Image },
 ]
 
 const MECANICO_LINKS = [{ to: '/admin/inventario', label: 'Inventario', end: true, icon: Package }]

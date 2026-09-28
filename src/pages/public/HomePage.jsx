@@ -4,7 +4,9 @@ import { MapPin, ArrowUpRight, Sparkles } from 'lucide-react'
 import Reveal from '../../components/public/Reveal'
 import LineWaves from '../../components/public/LineWaves'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
+import FotoPublica from '../../components/public/FotoPublica'
 import { CATEGORIAS, DIAGNOSTICO, DIRECCION, WHATSAPP_HREF, buildJsonLd, whatsappHref } from '../../lib/publicContent'
+import { useSitioFotos } from '../../lib/sitioFotos'
 
 function HeroMedia() {
   const [videoError, setVideoError] = useState(false)
@@ -55,6 +57,8 @@ function HeroMedia() {
 }
 
 export default function HomePage() {
+  const { fotos } = useSitioFotos()
+
   return (
     <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd()) }} />
@@ -161,10 +165,12 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={80}>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <div
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <FotoPublica
                 key={i}
-                className="aspect-square rounded-xl border border-white/8 bg-linear-to-br from-surface to-surface-2"
+                slotKey={`home-trabajo-${i}`}
+                fotos={fotos}
+                className="aspect-square rounded-xl border border-white/8"
               />
             ))}
           </div>
@@ -204,7 +210,7 @@ export default function HomePage() {
             ¿Necesitas una luna, un repuesto o una cotización a medida?
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">
-            Escríbenos por WhatsApp y te respondemos rápido — dinos la marca, línea y año de tu vehículo.
+            Escríbenos por WhatsApp y te respondemos rápido — decinos la marca, línea y año de tu vehículo.
           </p>
           <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
             <WhatsAppIcon size={16} />

@@ -21,6 +21,7 @@ import GastosPage from './pages/gastos/GastosPage'
 import MecanicosPage from './pages/admin/MecanicosPage'
 import UsuariosPage from './pages/admin/UsuariosPage'
 import ConfiguracionPage from './pages/admin/ConfiguracionPage'
+import SitioWebPage from './pages/admin/SitioWebPage'
 
 export default function App() {
   return (
@@ -52,6 +53,7 @@ export default function App() {
                   <Route path="/admin/mecanicos" element={<MecanicosPage />} />
                   <Route path="/admin/usuarios" element={<UsuariosPage />} />
                   <Route path="/admin/configuracion" element={<ConfiguracionPage />} />
+                  <Route path="/admin/sitio-web" element={<SitioWebPage />} />
                 </Route>
               </Route>
             </Route>

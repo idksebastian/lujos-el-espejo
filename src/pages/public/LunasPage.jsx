@@ -1,7 +1,9 @@
 import { Car, Search, PackageCheck } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
+import FotoPublica from '../../components/public/FotoPublica'
 import { whatsappHref, mensajeParaRuta } from '../../lib/publicContent'
+import { useSitioFotos } from '../../lib/sitioFotos'
 
 const WHATSAPP_LUNAS = whatsappHref(mensajeParaRuta('/lunas'))
 
@@ -24,6 +26,8 @@ const PASOS = [
 ]
 
 export default function LunasPage() {
+  const { fotos } = useSitioFotos()
+
   return (
     <div>
       <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-20">
@@ -74,10 +78,12 @@ export default function LunasPage() {
         </Reveal>
         <Reveal delay={80}>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
-              <div
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <FotoPublica
                 key={i}
-                className="aspect-square rounded-xl border border-white/8 bg-linear-to-br from-surface to-surface-2"
+                slotKey={`lunas-galeria-${i}`}
+                fotos={fotos}
+                className="aspect-square rounded-xl border border-white/8"
               />
             ))}
           </div>

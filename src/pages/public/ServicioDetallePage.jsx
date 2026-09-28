@@ -2,7 +2,9 @@ import { useParams, Navigate, Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import Reveal from '../../components/public/Reveal'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
+import FotoPublica from '../../components/public/FotoPublica'
 import { CATEGORIAS, whatsappHref, mensajeParaRuta } from '../../lib/publicContent'
+import { useSitioFotos } from '../../lib/sitioFotos'
 
 // Pasos genéricos válidos para cualquier servicio — hasta que el negocio
 // nos cuente el proceso real de cada uno (pendiente para la próxima
@@ -16,6 +18,7 @@ const PASOS_GENERICOS = [
 
 export default function ServicioDetallePage() {
   const { id } = useParams()
+  const { fotos } = useSitioFotos()
   const servicio = CATEGORIAS.find((c) => c.id === id && c.grupo === 'servicios')
 
   if (!servicio) return <Navigate to="/servicios" replace />
@@ -66,10 +69,12 @@ export default function ServicioDetallePage() {
         </Reveal>
         <Reveal delay={80}>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[0, 1, 2, 3].map((i) => (
-              <div
+            {[1, 2, 3, 4].map((i) => (
+              <FotoPublica
                 key={i}
-                className="aspect-square rounded-xl border border-white/8 bg-linear-to-br from-surface to-surface-2"
+                slotKey={`servicio-${servicio.id}-${i}`}
+                fotos={fotos}
+                className="aspect-square rounded-xl border border-white/8"
               />
             ))}
           </div>

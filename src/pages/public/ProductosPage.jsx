@@ -1,15 +1,18 @@
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
-import { WHATSAPP_HREF } from '../../lib/publicContent'
+import FotoPublica from '../../components/public/FotoPublica'
+import { CATEGORIAS, WHATSAPP_HREF } from '../../lib/publicContent'
+import { useSitioFotos } from '../../lib/sitioFotos'
 
 // Nota: esto es un catálogo fotográfico curado, no una búsqueda en vivo
 // contra el inventario real. Si mostráramos disponibilidad en tiempo real,
 // un producto agotado o no listado se leería como "no lo tienen" y
 // espantaría al cliente — mejor mostrar el trabajo real y dejar que
 // pregunten por WhatsApp lo puntual.
-const CATEGORIAS_FOTOS = ['Lunas', 'Espejos', 'Plumillas', 'Bombillería', 'Accesorios']
 
 export default function ProductosPage() {
+  const { fotos } = useSitioFotos()
+
   return (
     <div>
       <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-20">
@@ -24,17 +27,19 @@ export default function ProductosPage() {
         </Reveal>
       </section>
 
-      {CATEGORIAS_FOTOS.map((cat, ci) => (
-        <section key={cat} className="mx-auto max-w-5xl px-5 pb-14">
+      {CATEGORIAS.map((cat) => (
+        <section key={cat.id} className="mx-auto max-w-5xl px-5 pb-14">
           <Reveal>
-            <h2 className="font-display text-xl text-white">{cat}</h2>
+            <h2 className="font-display text-xl text-white">{cat.nombre}</h2>
           </Reveal>
           <Reveal delay={60}>
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {[0, 1, 2, 3].map((i) => (
-                <div
+              {[1, 2, 3, 4].map((i) => (
+                <FotoPublica
                   key={i}
-                  className="aspect-square rounded-xl border border-white/8 bg-linear-to-br from-surface to-surface-2"
+                  slotKey={`productos-${cat.id}-${i}`}
+                  fotos={fotos}
+                  className="aspect-square rounded-xl border border-white/8"
                 />
               ))}
             </div>
