@@ -7,6 +7,7 @@ import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import FotoPublica from '../../components/public/FotoPublica'
 import { CATEGORIAS, DIAGNOSTICO, DIRECCION, WHATSAPP_HREF, buildJsonLd, whatsappHref } from '../../lib/publicContent'
 import { useSitioFotos } from '../../lib/sitioFotos'
+import { useSeo } from '../../lib/useSeo'
 
 function HeroMedia() {
   const [videoError, setVideoError] = useState(false)
@@ -58,6 +59,12 @@ function HeroMedia() {
 
 export default function HomePage() {
   const { fotos } = useSitioFotos()
+  useSeo({
+    title: 'Lujos El Espejo 2 — Lunas y arreglos para tu carro en Pereira',
+    description:
+      'Especialistas en lunas para carro y moto en Pereira: fabricación, venta e instalación. También plumillas, bombillería y protección antirrobo. Barrio La Victoria — escríbenos por WhatsApp.',
+    path: '/',
+  })
 
   return (
     <div>

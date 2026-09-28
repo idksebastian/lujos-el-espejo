@@ -5,6 +5,7 @@ import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import FotoPublica from '../../components/public/FotoPublica'
 import { CATEGORIAS, whatsappHref, mensajeParaRuta } from '../../lib/publicContent'
 import { useSitioFotos } from '../../lib/sitioFotos'
+import { useSeo } from '../../lib/useSeo'
 
 // Pasos genéricos válidos para cualquier servicio — hasta que el negocio
 // nos cuente el proceso real de cada uno (pendiente para la próxima
@@ -20,6 +21,12 @@ export default function ServicioDetallePage() {
   const { id } = useParams()
   const { fotos } = useSitioFotos()
   const servicio = CATEGORIAS.find((c) => c.id === id && c.grupo === 'servicios')
+
+  useSeo({
+    title: servicio ? `${servicio.nombre} para tu carro en Pereira | Lujos El Espejo 2` : 'Servicios | Lujos El Espejo 2',
+    description: servicio ? `${servicio.desc} En Pereira, barrio La Victoria.` : '',
+    path: servicio ? servicio.path : '/servicios',
+  })
 
   if (!servicio) return <Navigate to="/servicios" replace />
 

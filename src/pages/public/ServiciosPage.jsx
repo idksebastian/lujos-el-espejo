@@ -3,8 +3,16 @@ import { ArrowUpRight } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
 import { SERVICIOS_GENERALES, WHATSAPP_HREF } from '../../lib/publicContent'
+import { useSeo } from '../../lib/useSeo'
 
 export default function ServiciosPage() {
+  useSeo({
+    title: 'Plumillas, bombillería y más para tu carro en Pereira | Lujos El Espejo 2',
+    description:
+      'Cambio de plumillas, bombillos LED, protección antirrobo e Identicar para tu carro o moto en Pereira, barrio La Victoria.',
+    path: '/servicios',
+  })
+
   return (
     <div>
       <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-20">

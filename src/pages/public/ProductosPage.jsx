@@ -3,6 +3,7 @@ import Reveal from '../../components/public/Reveal'
 import FotoPublica from '../../components/public/FotoPublica'
 import { CATEGORIAS, WHATSAPP_HREF } from '../../lib/publicContent'
 import { useSitioFotos } from '../../lib/sitioFotos'
+import { useSeo } from '../../lib/useSeo'
 
 // Nota: esto es un catálogo fotográfico curado, no una búsqueda en vivo
 // contra el inventario real. Si mostráramos disponibilidad en tiempo real,
@@ -12,6 +13,12 @@ import { useSitioFotos } from '../../lib/sitioFotos'
 
 export default function ProductosPage() {
   const { fotos } = useSitioFotos()
+  useSeo({
+    title: 'Fotos de nuestro trabajo — Lujos El Espejo 2, Pereira',
+    description:
+      'Trabajos reales de lunas, plumillas, bombillería y más, hechos en nuestro taller del barrio La Victoria, Pereira.',
+    path: '/productos',
+  })
 
   return (
     <div>

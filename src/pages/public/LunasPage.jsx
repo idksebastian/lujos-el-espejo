@@ -4,6 +4,7 @@ import Reveal from '../../components/public/Reveal'
 import FotoPublica from '../../components/public/FotoPublica'
 import { whatsappHref, mensajeParaRuta } from '../../lib/publicContent'
 import { useSitioFotos } from '../../lib/sitioFotos'
+import { useSeo } from '../../lib/useSeo'
 
 const WHATSAPP_LUNAS = whatsappHref(mensajeParaRuta('/lunas'))
 
@@ -27,6 +28,12 @@ const PASOS = [
 
 export default function LunasPage() {
   const { fotos } = useSitioFotos()
+  useSeo({
+    title: 'Lunas para carro y moto en Pereira | Lujos El Espejo 2',
+    description:
+      '¿Se te rompió el vidrio o el espejo de tu carro o moto? En Pereira te lo conseguimos e instalamos, incluso las referencias difíciles de encontrar. Cotiza por WhatsApp.',
+    path: '/lunas',
+  })
 
   return (
     <div>

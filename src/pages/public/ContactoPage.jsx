@@ -2,8 +2,15 @@ import { MapPin, Clock, Truck, Phone, ArrowUpRight } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
 import { DIRECCION, MAPA_QUERY, WHATSAPP, WHATSAPP_HREF } from '../../lib/publicContent'
+import { useSeo } from '../../lib/useSeo'
 
 export default function ContactoPage() {
+  useSeo({
+    title: 'Contacto y ubicación en Pereira | Lujos El Espejo 2',
+    description: 'Visítanos en el barrio La Victoria, Pereira, o escríbenos por WhatsApp. Dirección, horario y mapa.',
+    path: '/contacto',
+  })
+
   return (
     <div>
       <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-20">
