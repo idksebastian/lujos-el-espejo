@@ -19,33 +19,28 @@ export const CATEGORIAS = [
   {
     slug: 'lunas',
     nombre: 'Lunas para carro y moto',
-    corta: 'Lunas',
     desc: 'Vidrios y espejos a la medida, instalación incluida — nuestra especialidad.',
     destacado: true,
   },
   {
     slug: 'servicios',
     nombre: 'Plumillas',
-    corta: 'Plumillas',
     desc: 'Cambio de plumillas para todo tipo de vehículo.',
   },
   {
     slug: 'servicios',
     nombre: 'Bombillería',
-    corta: 'Bombillería',
     desc: 'Bombillos y luces LED para carro y moto, en el momento.',
   },
   {
     slug: 'servicios',
-    nombre: 'Seguros',
-    corta: 'Seguros',
-    desc: 'Asesoría y trámite de seguros para tu vehículo.',
+    nombre: 'Seguros antirrobo',
+    desc: 'No es seguro vehicular: aseguramos emblemas, antenas y lunas para que no se puedan desmontar y sea mucho más difícil que te los roben.',
   },
   {
     slug: 'servicios',
     nombre: 'Identicar',
-    corta: 'Identicar',
-    desc: 'Trámite de identificación vehicular.',
+    desc: 'Grabamos la placa de tu vehículo en la luna — si te la roban, no coincide con ningún carro y no se la pueden vender a nadie.',
   },
 ]
 

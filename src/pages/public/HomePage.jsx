@@ -30,16 +30,19 @@ function HeroMedia() {
 
   return (
     <>
-      {/* Se activa solo si existe /hero.mp4 — si no, cae al degradado de
-          arriba sin romper nada. Para poner un video real: exporta un clip
-          corto (10-20s) de trabajo real en el taller, sin audio importante
-          (queda muteado), y guárdalo como public/hero.mp4. */}
+      {/* Se activa solo si existe /hero.mp4 — si no, cae a la animación de
+          arriba sin romper nada. Sin poster a propósito: un poster se ve
+          instantáneamente mientras el navegador todavía está intentando
+          cargar el video, así que mostrar el logo ahí solo produce un
+          parpadeo del logo antes de caer a la animación. Para poner un
+          video real: exporta un clip corto (10-20s) de trabajo real en el
+          taller, sin audio importante (queda muteado), y guárdalo como
+          public/hero.mp4. */}
       <video
         autoPlay
         muted
         loop
         playsInline
-        poster="/logo.jpg"
         onError={() => setVideoError(true)}
         className="absolute inset-0 size-full object-cover opacity-40"
       >
@@ -62,11 +65,11 @@ export default function HomePage() {
             Barrio La Victoria · Pereira
           </p>
           <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl" style={{ textWrap: 'balance' }}>
-            Lujos y accesorios para tu carro
+            Lunas a medida para tu carro y moto
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base text-muted">
-            Especialistas en lunas para carro y moto — más plumillas, bombillería, seguros e identicar. Hacemos envíos
-            nacionales y domicilios.
+            Fabricamos y conseguimos lunas difíciles de encontrar, con instalación incluida. También plumillas,
+            bombillería y seguridad antirrobo para tu vehículo.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary">
