@@ -1,4 +1,5 @@
-import { MessageCircle, Car, Search, PackageCheck } from 'lucide-react'
+import { Car, Search, PackageCheck } from 'lucide-react'
+import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
 import { whatsappHref } from '../../lib/publicContent'
 
@@ -36,7 +37,7 @@ export default function LunasPage() {
             mismo, te la conseguimos.
           </p>
           <a href={WHATSAPP_LUNAS} target="_blank" rel="noreferrer" className="btn-primary mt-8 inline-flex">
-            <MessageCircle size={16} />
+            <WhatsAppIcon size={16} />
             Cotizar mi luna por WhatsApp
           </a>
         </Reveal>
@@ -92,7 +93,7 @@ export default function LunasPage() {
             Escríbenos ahora y te decimos si la tenemos disponible.
           </p>
           <a href={WHATSAPP_LUNAS} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
-            <MessageCircle size={16} />
+            <WhatsAppIcon size={16} />
             Escríbenos por WhatsApp
           </a>
         </Reveal>

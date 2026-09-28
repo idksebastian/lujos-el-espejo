@@ -1,4 +1,5 @@
-import { MessageCircle, MapPin, Clock, Truck, Phone, ArrowUpRight } from 'lucide-react'
+import { MapPin, Clock, Truck, Phone, ArrowUpRight } from 'lucide-react'
+import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
 import { DIRECCION, MAPA_QUERY, WHATSAPP, WHATSAPP_HREF } from '../../lib/publicContent'
 
@@ -61,7 +62,7 @@ export default function ContactoPage() {
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary">
-                  <MessageCircle size={16} />
+                  <WhatsAppIcon size={16} />
                   Escríbenos por WhatsApp
                 </a>
                 <a

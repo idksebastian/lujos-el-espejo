@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import { MessageCircle, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
+import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import { WHATSAPP, WHATSAPP_HREF } from '../../lib/publicContent'
 
 const NAV_LINKS = [
@@ -48,7 +49,7 @@ export default function PublicLayout() {
 
           <div className="flex items-center gap-3">
             <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary hidden sm:inline-flex">
-              <MessageCircle size={16} />
+              <WhatsAppIcon size={16} />
               Escríbenos
             </a>
             <button
@@ -68,7 +69,7 @@ export default function PublicLayout() {
               <NavItem key={l.to} {...l} onClick={() => setMenuAbierto(false)} />
             ))}
             <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-1 inline-flex">
-              <MessageCircle size={16} />
+              <WhatsAppIcon size={16} />
               Escríbenos por WhatsApp
             </a>
           </nav>
@@ -105,7 +106,7 @@ export default function PublicLayout() {
         aria-label="Escríbenos por WhatsApp"
         className="fixed bottom-5 right-5 z-40 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/40 transition hover:scale-105"
       >
-        <MessageCircle size={26} fill="white" className="text-[#25D366]" />
+        <WhatsAppIcon size={30} />
       </a>
     </div>
   )

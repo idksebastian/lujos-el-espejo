@@ -16,6 +16,26 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://lujoselespejo.com/servicios/plumillas</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lujoselespejo.com/servicios/bombilleria</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lujoselespejo.com/servicios/proteccion-antirrobo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://lujoselespejo.com/servicios/identicar</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://lujoselespejo.com/productos</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

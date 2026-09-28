@@ -17,34 +17,44 @@ export const WHATSAPP_HREF = whatsappHref()
 
 export const CATEGORIAS = [
   {
-    slug: 'lunas',
+    id: 'lunas',
+    grupo: 'lunas',
+    path: '/lunas',
     nombre: 'Lunas para carro y moto',
     desc: 'Vidrios y espejos a la medida, instalación incluida — nuestra especialidad.',
     destacado: true,
   },
   {
-    slug: 'servicios',
+    id: 'plumillas',
+    grupo: 'servicios',
+    path: '/servicios/plumillas',
     nombre: 'Plumillas',
     desc: 'Cambio de plumillas para todo tipo de vehículo.',
   },
   {
-    slug: 'servicios',
+    id: 'bombilleria',
+    grupo: 'servicios',
+    path: '/servicios/bombilleria',
     nombre: 'Bombillería',
     desc: 'Bombillos y luces LED para carro y moto, en el momento.',
   },
   {
-    slug: 'servicios',
+    id: 'proteccion-antirrobo',
+    grupo: 'servicios',
+    path: '/servicios/proteccion-antirrobo',
     nombre: 'Protección antirrobo',
     desc: 'Aseguramos emblemas, antenas y lunas para que sea casi imposible desmontarlos.',
   },
   {
-    slug: 'servicios',
+    id: 'identicar',
+    grupo: 'servicios',
+    path: '/servicios/identicar',
     nombre: 'Identicar',
     desc: 'Grabamos tu placa u otro diseño personalizado directamente en la luna, a tu medida.',
   },
 ]
 
-export const SERVICIOS_GENERALES = CATEGORIAS.filter((c) => c.slug === 'servicios')
+export const SERVICIOS_GENERALES = CATEGORIAS.filter((c) => c.grupo === 'servicios')
 
 export function buildJsonLd() {
   return {

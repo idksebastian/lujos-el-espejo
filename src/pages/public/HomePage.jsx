@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { MessageCircle, MapPin, ArrowUpRight, Sparkles } from 'lucide-react'
+import { MapPin, ArrowUpRight, Sparkles } from 'lucide-react'
 import Reveal from '../../components/public/Reveal'
 import LineWaves from '../../components/public/LineWaves'
+import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import { CATEGORIAS, DIRECCION, WHATSAPP_HREF, buildJsonLd } from '../../lib/publicContent'
 
 function HeroMedia() {
@@ -73,7 +74,7 @@ export default function HomePage() {
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary">
-              <MessageCircle size={16} />
+              <WhatsAppIcon size={16} />
               Escríbenos por WhatsApp
             </a>
             <Link to="/lunas" className="btn-secondary">
@@ -125,7 +126,7 @@ export default function HomePage() {
               className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]"
             >
               <Link
-                to={`/${c.slug}`}
+                to={c.path}
                 className={`card group flex h-full flex-col p-5 transition hover:-translate-y-0.5 hover:border-brand-600/50 ${c.destacado ? 'ring-1 ring-brand-600/40' : ''}`}
               >
                 {c.destacado && (
@@ -206,7 +207,7 @@ export default function HomePage() {
             Escríbenos por WhatsApp y te respondemos rápido — decinos la marca, línea y año de tu vehículo.
           </p>
           <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
-            <MessageCircle size={16} />
+            <WhatsAppIcon size={16} />
             Escríbenos por WhatsApp
           </a>
         </Reveal>

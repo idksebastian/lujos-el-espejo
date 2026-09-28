@@ -1,4 +1,4 @@
-import { MessageCircle } from 'lucide-react'
+import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
 import { WHATSAPP_HREF } from '../../lib/publicContent'
 
@@ -51,7 +51,7 @@ export default function ProductosPage() {
             Cuéntanos qué necesitas y te confirmamos disponibilidad enseguida.
           </p>
           <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
-            <MessageCircle size={16} />
+            <WhatsAppIcon size={16} />
             Preguntar por WhatsApp
           </a>
         </Reveal>

@@ -7,6 +7,7 @@ import PublicLayout from './pages/public/PublicLayout'
 import HomePage from './pages/public/HomePage'
 import LunasPage from './pages/public/LunasPage'
 import ServiciosPage from './pages/public/ServiciosPage'
+import ServicioDetallePage from './pages/public/ServicioDetallePage'
 import ProductosPage from './pages/public/ProductosPage'
 import ContactoPage from './pages/public/ContactoPage'
 import Login from './pages/Login'
@@ -31,6 +32,7 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/lunas" element={<LunasPage />} />
               <Route path="/servicios" element={<ServiciosPage />} />
+              <Route path="/servicios/:id" element={<ServicioDetallePage />} />
               <Route path="/productos" element={<ProductosPage />} />
               <Route path="/contacto" element={<ContactoPage />} />
             </Route>
