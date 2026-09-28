@@ -34,13 +34,13 @@ export const CATEGORIAS = [
   },
   {
     slug: 'servicios',
-    nombre: 'Seguros antirrobo',
-    desc: 'No es seguro vehicular: aseguramos emblemas, antenas y lunas para que no se puedan desmontar y sea mucho más difícil que te los roben.',
+    nombre: 'Protección antirrobo',
+    desc: 'Aseguramos emblemas, antenas y lunas para que sea casi imposible desmontarlos.',
   },
   {
     slug: 'servicios',
     nombre: 'Identicar',
-    desc: 'Grabamos la placa de tu vehículo en la luna — si te la roban, no coincide con ningún carro y no se la pueden vender a nadie.',
+    desc: 'Grabamos tu placa u otro diseño personalizado directamente en la luna, a tu medida.',
   },
 ]
 

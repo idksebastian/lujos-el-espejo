@@ -69,7 +69,7 @@ export default function HomePage() {
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base text-muted">
             Fabricamos y conseguimos lunas difíciles de encontrar, con instalación incluida. También plumillas,
-            bombillería y seguridad antirrobo para tu vehículo.
+            bombillería y protección antirrobo para tu vehículo.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary">
@@ -117,9 +117,13 @@ export default function HomePage() {
         <Reveal>
           <h2 className="font-display text-2xl text-white">Encuentra tu solución</h2>
         </Reveal>
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 flex flex-wrap justify-center gap-4">
           {CATEGORIAS.map((c, i) => (
-            <Reveal key={c.nombre} delay={i * 60}>
+            <Reveal
+              key={c.nombre}
+              delay={i * 60}
+              className="w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)]"
+            >
               <Link
                 to={`/${c.slug}`}
                 className={`card group flex h-full flex-col p-5 transition hover:-translate-y-0.5 hover:border-brand-600/50 ${c.destacado ? 'ring-1 ring-brand-600/40' : ''}`}
