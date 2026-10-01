@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
@@ -31,6 +31,13 @@ export default function PublicLayout() {
   const [menuAbierto, setMenuAbierto] = useState(false)
   const location = useLocation()
   const whatsappActual = whatsappHref(mensajeParaRuta(location.pathname))
+
+  // React Router no resetea el scroll al navegar (a diferencia de una
+  // recarga normal de página) — sin esto, entrar a una página nueva
+  // hereda el scroll que traías en la anterior.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location.pathname])
 
   return (
     <div className="min-h-screen bg-ink text-white">

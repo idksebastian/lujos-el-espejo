@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -41,6 +41,13 @@ export default function Layout() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [stockBajoCount, setStockBajoCount] = useState(0)
   const links = usuario?.rol === 'admin' ? ADMIN_LINKS : MECANICO_LINKS
+  const mainRef = useRef(null)
+
+  // El scroll vive dentro de <main> (overflow-y-auto), no en la ventana —
+  // sin esto, cambiar de página hereda el scroll de la anterior.
+  useEffect(() => {
+    mainRef.current?.scrollTo(0, 0)
+  }, [location.pathname])
 
   useEffect(() => {
     if (usuario?.rol !== 'admin') return
@@ -94,7 +101,7 @@ export default function Layout() {
           <div className="w-9" />
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+        <main ref={mainRef} className="flex-1 overflow-y-auto p-4 md:p-8">
           <Outlet />
         </main>
       </div>
