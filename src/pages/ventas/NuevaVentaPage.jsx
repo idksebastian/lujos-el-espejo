@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Camera, Trash2, CheckCircle2, Receipt, TriangleAlert, Plus, Wrench, Truck, ChevronDown } from 'lucide-react'
 import { supabase } from '../../lib/supabaseClient'
-import { calcularReparto } from '../../lib/reparto'
 import { generarFacturaPng } from '../../lib/recibo'
 import BarcodeScannerModal from '../../components/BarcodeScannerModal'
 import ProductoAutocomplete from '../../components/ProductoAutocomplete'
@@ -23,6 +22,9 @@ export default function NuevaVentaPage() {
   const [montoTotal, setMontoTotal] = useState('')
   const [mecanicoIds, setMecanicoIds] = useState([])
   const [mecanicoMontos, setMecanicoMontos] = useState({})
+  const [montoMecanicoTotal, setMontoMecanicoTotal] = useState('')
+  const [montoDuenaManual, setMontoDuenaManual] = useState('')
+  const [montoSocioManual, setMontoSocioManual] = useState('')
   const [metodoPago, setMetodoPago] = useState('efectivo')
   const [clienteNombre, setClienteNombre] = useState('')
   const [scannerOpen, setScannerOpen] = useState(false)
@@ -163,7 +165,10 @@ export default function NuevaVentaPage() {
 
   const costoTotal = items.reduce((sum, it) => sum + it.costo * it.cantidad, 0)
   const montoTotalNum = Number(montoTotal) || 0
-  const preview = calcularReparto(montoTotalNum, costoTotal, mecanicoIds.length > 0)
+  const montoMecanicoTotalNum = mecanicoIds.length > 0 ? Number(montoMecanicoTotal) || 0 : 0
+  const montoDuenaNum = Number(montoDuenaManual) || 0
+  const montoSocioNum = Number(montoSocioManual) || 0
+  const gananciaReferencia = montoTotalNum - costoTotal
   const montoFacturaNum = Number(montoFactura) || 0
   const montoCobrado = ajusteFactura && montoFacturaNum > 0 ? montoFacturaNum : montoTotalNum
   const pagaConNum = Number(pagaCon) || 0
@@ -171,8 +176,9 @@ export default function NuevaVentaPage() {
 
   // Cuando hay 2+ mecánicos: todos menos el último tienen un monto propio
   // (el "chanchullo" de Santiago, por ejemplo); el último se lleva lo que
-  // sobra del total a repartir entre mecánicos — así la suma siempre cuadra
-  // exacto sin que el usuario tenga que calcular nada.
+  // sobra del monto de mecánico que se escribió arriba — así la suma
+  // siempre cuadra exacto sin que el usuario tenga que calcular nada. El
+  // monto total de mecánico ya no lo calcula el sistema: lo escriben ellos.
   const mecanicosConMonto =
     mecanicoIds.length > 1
       ? (() => {
@@ -181,7 +187,7 @@ export default function NuevaVentaPage() {
           const idResto = mecanicoIds[mecanicoIds.length - 1]
           return [
             ...explicitos.map((id) => ({ id, monto: Number(mecanicoMontos[id]) || 0, editable: true })),
-            { id: idResto, monto: Math.max(preview.montoMecanico - sumaExplicitos, 0), editable: false },
+            { id: idResto, monto: Math.max(montoMecanicoTotalNum - sumaExplicitos, 0), editable: false },
           ]
         })()
       : []
@@ -199,6 +205,9 @@ export default function NuevaVentaPage() {
     setMontoTotal('')
     setMecanicoIds([])
     setMecanicoMontos({})
+    setMontoMecanicoTotal('')
+    setMontoDuenaManual('')
+    setMontoSocioManual('')
     setMetodoPago('efectivo')
     setClienteNombre('')
     setVentaConfirmada(null)
@@ -221,10 +230,16 @@ export default function NuevaVentaPage() {
     if (!montoTotalNum || montoTotalNum <= 0) return setError('El monto total pagado debe ser mayor a $0')
     if (ajusteFactura && montoFacturaNum <= 0) return setError('Indica el monto real que pagó el cliente')
 
+    if (mecanicoIds.length > 0 && !montoMecanicoTotal) {
+      return setError('Escribe cuánto le corresponde al mecánico (o a los mecánicos)')
+    }
+    if (!montoDuenaManual) return setError(`Escribe cuánto le corresponde a ${nombreSocio1}`)
+    if (!montoSocioManual) return setError(`Escribe cuánto le corresponde a ${nombreSocio2}`)
+
     if (mecanicoIds.length > 1) {
       const sumaMecanicos = mecanicosConMonto.reduce((s, m) => s + m.monto, 0)
-      if (Math.round(sumaMecanicos * 100) !== Math.round(preview.montoMecanico * 100)) {
-        return setError('Los montos de los mecánicos no cuadran con el total a repartir entre mecánicos')
+      if (Math.round(sumaMecanicos * 100) !== Math.round(montoMecanicoTotalNum * 100)) {
+        return setError('Los montos de los mecánicos no cuadran con el monto de mecánico que escribiste arriba')
       }
       const negativo = mecanicosConMonto.find((m) => m.monto < 0)
       if (negativo) return setError('Los montos asignados a los mecánicos superan lo que hay para repartir')
@@ -235,10 +250,10 @@ export default function NuevaVentaPage() {
       return setError(`No hay suficiente stock de "${excedeStock.nombre}" (disponible: ${excedeStock.stockDisponible})`)
     }
 
-    // El último mecánico seleccionado es quien recibe "el resto" del total
-    // a repartir entre mecánicos; los demás llevan un monto propio (el
-    // "chanchullo" de turno). Con un solo mecánico, es exactamente lo de
-    // siempre: se lleva el 100% del cálculo automático.
+    // El último mecánico seleccionado es quien recibe "el resto" del monto
+    // de mecánico escrito arriba; los demás llevan un monto propio (el
+    // "chanchullo" de turno). El reparto completo (mecánico / duena / socio)
+    // ya no lo calcula el sistema — son los montos que ellos escribieron.
     const mecanicoIdPrincipal = mecanicoIds.length > 0 ? mecanicoIds[mecanicoIds.length - 1] : null
     const mecanicosExtra =
       mecanicoIds.length > 1
@@ -253,6 +268,9 @@ export default function NuevaVentaPage() {
         p_metodo_pago: metodoPago,
         p_cliente_nombre: clienteNombre || null,
         p_items: items.map((it) => ({ producto_id: it.producto_id, cantidad: it.cantidad })),
+        p_monto_mecanico: montoMecanicoTotalNum,
+        p_monto_duena: montoDuenaNum,
+        p_monto_socio: montoSocioNum,
         p_servicios: servicios.map((s) => ({ descripcion: s.descripcion, monto: s.monto })),
         p_monto_factura: ajusteFactura && montoFacturaNum > 0 ? montoFacturaNum : null,
         p_externos: externos.map((ex) => ({
@@ -634,11 +652,19 @@ export default function NuevaVentaPage() {
             </p>
           )}
 
+          {mecanicoIds.length > 0 && (
+            <label className="mt-3 block">
+              <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">
+                Monto para el{mecanicoIds.length > 1 && '/los'} mecánico{mecanicoIds.length > 1 && 's'}
+              </span>
+              <MoneyInput value={montoMecanicoTotal} onChange={setMontoMecanicoTotal} placeholder="0" />
+            </label>
+          )}
+
           {mecanicoIds.length > 1 && (
             <div className="mt-3 space-y-2 rounded-lg border border-white/10 p-3">
               <p className="text-[11px] text-muted">
-                Cuánto le corresponde a cada uno — total a repartir entre mecánicos: $
-                {preview.montoMecanico.toLocaleString('es-CO')}
+                Cómo se reparte ese monto entre ellos:
               </p>
               {mecanicosConMonto.map((m) => {
                 const nombre = mecanicos.find((mec) => mec.id === m.id)?.nombre ?? '—'
@@ -667,6 +693,28 @@ export default function NuevaVentaPage() {
           )}
         </div>
 
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">
+              Monto para {nombreSocio1}
+            </span>
+            <MoneyInput value={montoDuenaManual} onChange={setMontoDuenaManual} placeholder="0" />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">
+              Monto para {nombreSocio2}
+            </span>
+            <MoneyInput value={montoSocioManual} onChange={setMontoSocioManual} placeholder="0" />
+          </label>
+        </div>
+
+        {(items.length > 0 || servicios.length > 0) && montoTotalNum > 0 && (
+          <p className="text-[11px] text-muted">
+            Ganancia de referencia (monto − costo de productos): ${gananciaReferencia.toLocaleString('es-CO')} — el
+            reparto que escribas arriba no tiene que sumar exactamente esto.
+          </p>
+        )}
+
         <label className="block">
           <span className="mb-1 block text-xs font-medium uppercase tracking-wide text-muted">Método de pago</span>
           <select value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} className="input">
@@ -687,36 +735,6 @@ export default function NuevaVentaPage() {
             placeholder="Nombre del cliente"
           />
         </label>
-
-        {(items.length > 0 || servicios.length > 0) && montoTotalNum > 0 && (
-          <div className="rounded-lg border border-white/10 bg-black/25 p-3">
-            <div className="mb-2 flex items-center justify-between text-xs text-muted">
-              <span className="font-semibold uppercase tracking-wide text-white/70">Vista previa del reparto</span>
-              <span>Ganancia: ${preview.baseReparto.toLocaleString('es-CO')}</span>
-            </div>
-            <p className="mb-2 text-[11px] text-muted">Costo de productos: ${costoTotal.toLocaleString('es-CO')}</p>
-            <div className="grid grid-cols-3 gap-2">
-              <RepartoItem label="Mecánico" pct={mecanicoIds.length > 0 ? '50%' : '0%'} valor={preview.montoMecanico} color="bg-sky-500" />
-              <RepartoItem
-                label={nombreSocio1}
-                pct={mecanicoIds.length > 0 ? '25%' : '50%'}
-                valor={preview.montoDuena}
-                color="bg-amber-500"
-              />
-              <RepartoItem
-                label={nombreSocio2}
-                pct={mecanicoIds.length > 0 ? '25%' : '50%'}
-                valor={preview.montoSocio}
-                color="bg-emerald-500"
-              />
-            </div>
-            {mecanicoIds.length === 0 && (
-              <p className="mt-2 text-[11px] text-muted">
-                Sin mecánico asignado: toda la ganancia queda para {nombreSocio1} y {nombreSocio2}.
-              </p>
-            )}
-          </div>
-        )}
 
         {error && (
           <p className="flex items-center gap-2 rounded-lg bg-brand-700/15 px-3 py-2 text-sm text-brand-400 ring-1 ring-brand-700/30">
@@ -758,18 +776,6 @@ export default function NuevaVentaPage() {
       </div>
 
       <BarcodeScannerModal open={scannerOpen} onClose={() => setScannerOpen(false)} onDetected={handleEscaneado} />
-    </div>
-  )
-}
-
-function RepartoItem({ label, pct, valor, color }) {
-  return (
-    <div className="rounded-md bg-white/5 px-2 py-2 text-center">
-      <span className={`mx-auto mb-1 block size-1.5 rounded-full ${color}`} />
-      <p className="text-[10px] uppercase tracking-wide text-muted">
-        {label} <span className="text-muted/70">{pct}</span>
-      </p>
-      <p className="text-sm font-semibold text-white">${valor.toLocaleString('es-CO')}</p>
     </div>
   )
 }
