@@ -6,7 +6,7 @@ import LineWaves from '../../components/public/LineWaves'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import FotoPublica from '../../components/public/FotoPublica'
 import { CATEGORIAS, DIAGNOSTICO, DIRECCION, WHATSAPP_HREF, buildJsonLd, whatsappHref } from '../../lib/publicContent'
-import { useSitioFotos } from '../../lib/sitioFotos'
+import { GALERIA_HOME, useSitioFotos } from '../../lib/sitioFotos'
 import { useSeo } from '../../lib/useSeo'
 
 function HeroMedia() {
@@ -172,10 +172,10 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={80}>
           <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+            {GALERIA_HOME.map((slotKey) => (
               <FotoPublica
-                key={i}
-                slotKey={`home-trabajo-${i}`}
+                key={slotKey}
+                slotKey={slotKey}
                 fotos={fotos}
                 className="aspect-square rounded-xl border border-white/8"
               />

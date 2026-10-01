@@ -42,7 +42,9 @@ export default function InventarioPage() {
   const filtrados = useMemo(() => {
     const term = busqueda.trim().toLowerCase()
     if (!term) return productos
-    return productos.filter((p) => p.nombre.toLowerCase().includes(term))
+    return productos.filter(
+      (p) => p.nombre.toLowerCase().includes(term) || p.codigo_barras?.toLowerCase().includes(term)
+    )
   }, [productos, busqueda])
 
   // Plata que hay metida en el inventario: costo de compra × stock que
@@ -116,7 +118,7 @@ export default function InventarioPage() {
           <input
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Buscar por nombre…"
+            placeholder="Buscar por nombre o código…"
             className="input pl-9"
           />
         </div>

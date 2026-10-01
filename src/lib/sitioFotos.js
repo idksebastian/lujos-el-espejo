@@ -12,7 +12,6 @@ function secuencia(prefijo, n) {
 // (aspect-square en todas las galerías públicas), por eso el recorte del
 // admin siempre usa relación 1:1.
 export const SECCIONES_FOTOS = [
-  { titulo: 'Inicio — "Nuestro trabajo"', slots: secuencia('home-trabajo', 6) },
   { titulo: 'Lunas — Trabajos realizados', slots: secuencia('lunas-galeria', 6) },
   ...CATEGORIAS.filter((c) => c.grupo === 'servicios').map((s) => ({
     titulo: `${s.nombre} — Trabajos realizados`,
@@ -22,6 +21,18 @@ export const SECCIONES_FOTOS = [
     titulo: `Productos — ${c.nombre}`,
     slots: secuencia(`productos-${c.id}`, 4),
   })),
+]
+
+// El "Nuestro trabajo" del Home no tiene espacio propio para subir fotos —
+// reutiliza la primera foto de cada galería de servicio (Lunas aporta dos,
+// por ser la especialidad) para no pedirles subir la misma foto dos veces.
+export const GALERIA_HOME = [
+  'lunas-galeria-1',
+  'servicio-plumillas-1',
+  'servicio-bombilleria-1',
+  'servicio-proteccion-antirrobo-1',
+  'servicio-identicar-1',
+  'lunas-galeria-2',
 ]
 
 export function useSitioFotos() {

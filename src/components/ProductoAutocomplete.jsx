@@ -24,7 +24,9 @@ export default function ProductoAutocomplete({ onSelect }) {
   const resultados = useMemo(() => {
     const texto = term.trim().toLowerCase()
     if (!texto) return []
-    return productos.filter((p) => p.nombre.toLowerCase().includes(texto)).slice(0, 8)
+    return productos
+      .filter((p) => p.nombre.toLowerCase().includes(texto) || p.codigo_barras?.toLowerCase().includes(texto))
+      .slice(0, 8)
   }, [term, productos])
 
   function elegir(producto) {
@@ -43,7 +45,7 @@ export default function ProductoAutocomplete({ onSelect }) {
         }}
         onFocus={() => resultados.length > 0 && setAbierto(true)}
         onBlur={() => setTimeout(() => setAbierto(false), 150)}
-        placeholder="Buscar producto por nombre…"
+        placeholder="Buscar producto por nombre o código…"
         className="input"
       />
       {abierto && resultados.length > 0 && (
