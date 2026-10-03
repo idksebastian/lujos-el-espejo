@@ -1,16 +1,23 @@
-// Google Analytics 4 sin librerías extra. Solo se activa si existe
-// VITE_GA_MEASUREMENT_ID (en .env.local o en las variables de Vercel); si
-// no hay valor, todas las funciones de aquí no hacen nada y la app sigue igual.
+// Google Analytics 4 sin librerías extra. El Measurement ID de producción va
+// por defecto aquí; VITE_GA_MEASUREMENT_ID, si existe, lo sobrescribe (por
+// ejemplo para probar con otra propiedad). Un Measurement ID es público, no
+// es una credencial.
 //
 // Solo se llama desde las páginas públicas (PublicLayout), así que el panel
 // de administración nunca envía eventos.
 
-const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID
+const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-HCFM85M6NJ'
+
+// Solo se envían datos desde el dominio de producción. localhost, previews
+// de Vercel y cualquier otro host no inicializan GA4, así que las funciones
+// de abajo quedan en no-op.
+const HOSTS_PRODUCCION = ['lujoselespejo.com', 'www.lujoselespejo.com']
 
 let iniciado = false
 
 export function iniciarAnalytics() {
   if (!GA_ID || iniciado) return
+  if (!HOSTS_PRODUCCION.includes(window.location.hostname)) return
   iniciado = true
 
   // gtag se define antes de cargar el script: si un bloqueador lo impide,
