@@ -5,6 +5,7 @@ import Reveal from '../../components/public/Reveal'
 import LineWaves from '../../components/public/LineWaves'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import FotoPublica from '../../components/public/FotoPublica'
+import JsonLd from '../../components/public/JsonLd'
 import { CATEGORIAS, DIAGNOSTICO, DIRECCION, WHATSAPP_HREF, buildJsonLd, whatsappHref } from '../../lib/publicContent'
 import { GALERIA_HOME, useSitioFotos } from '../../lib/sitioFotos'
 import { useSeo } from '../../lib/useSeo'
@@ -42,15 +43,10 @@ function HeroMedia() {
           video real: exporta un clip corto (10-20s) de trabajo real en el
           taller, sin audio importante (queda muteado), y guárdalo como
           public/hero.mp4. */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        onError={() => setVideoError(true)}
-        className="absolute inset-0 size-full object-cover opacity-40"
-      >
-        <source src="/hero.mp4" type="video/mp4" />
+      <video autoPlay muted loop playsInline className="absolute inset-0 size-full object-cover opacity-40">
+        {/* El error se escucha en <source>, no en <video>: si /hero.mp4 no
+            carga, el navegador dispara el evento sobre el source. */}
+        <source src="/hero.mp4" type="video/mp4" onError={() => setVideoError(true)} />
       </video>
       <div className="absolute inset-0 bg-linear-to-b from-ink/60 via-ink/70 to-ink" />
     </>
@@ -58,17 +54,17 @@ function HeroMedia() {
 }
 
 export default function HomePage() {
-  const { fotos } = useSitioFotos()
+  const { fotos, alts } = useSitioFotos()
   useSeo({
-    title: 'Lujos El Espejo 2 — Lunas y arreglos para tu carro en Pereira',
+    title: 'Lunas y accesorios para carros en Pereira | Lujos El Espejo',
     description:
-      'Especialistas en lunas para carro y moto en Pereira: fabricación, venta e instalación. También plumillas, bombillería y protección antirrobo. Barrio La Victoria — escríbenos por WhatsApp.',
+      'Encuentra lunas, espejos, plumillas, bombillería y accesorios para carros en Pereira. Venta, reparación e instalación en Lujos El Espejo.',
     path: '/',
   })
 
   return (
     <div>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd()) }} />
+      <JsonLd data={buildJsonLd()} />
 
       <section className="relative overflow-hidden">
         <HeroMedia />
@@ -77,14 +73,14 @@ export default function HomePage() {
             Barrio La Victoria · Pereira
           </p>
           <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl" style={{ textWrap: 'balance' }}>
-            Lunas a medida para tu carro y moto
+            Lunas y accesorios para carros en Pereira
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base text-muted">
             Fabricamos y conseguimos lunas difíciles de encontrar, con instalación incluida. También plumillas,
             bombillería y protección antirrobo para tu vehículo.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary">
+            <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" data-cta="hero" className="btn-primary">
               <WhatsAppIcon size={16} />
               Escríbenos por WhatsApp
             </a>
@@ -102,6 +98,7 @@ export default function HomePage() {
                   href={whatsappHref(d.mensaje)}
                   target="_blank"
                   rel="noreferrer"
+                  data-cta="diagnostico"
                   className="rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm text-white transition hover:border-brand-500 hover:bg-brand-600/10"
                 >
                   {d.problema}
@@ -177,6 +174,7 @@ export default function HomePage() {
                 key={slotKey}
                 slotKey={slotKey}
                 fotos={fotos}
+                alts={alts}
                 className="aspect-square rounded-xl border border-white/8"
               />
             ))}
@@ -219,7 +217,13 @@ export default function HomePage() {
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">
             Escríbenos por WhatsApp y te respondemos rápido — decinos la marca, línea y año de tu vehículo.
           </p>
-          <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
+          <a
+            href={WHATSAPP_HREF}
+            target="_blank"
+            rel="noreferrer"
+            data-cta="cierre"
+            className="btn-primary mt-6 inline-flex"
+          >
             <WhatsAppIcon size={16} />
             Escríbenos por WhatsApp
           </a>

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
-import { WHATSAPP, whatsappHref, mensajeParaRuta } from '../../lib/publicContent'
+import { WHATSAPP, whatsappHref, mensajeParaRuta, NOMBRE_NEGOCIO } from '../../lib/publicContent'
+import { iniciarAnalytics, registrarVista, registrarClicsDeConversion } from '../../lib/analytics'
 
 const NAV_LINKS = [
   { to: '/', label: 'Inicio', end: true },
@@ -39,14 +40,25 @@ export default function PublicLayout() {
     window.scrollTo(0, 0)
   }, [location.pathname])
 
+  // Analytics solo en el sitio público. Si no hay VITE_GA_MEASUREMENT_ID,
+  // estas funciones no hacen nada.
+  useEffect(() => {
+    iniciarAnalytics()
+    return registrarClicsDeConversion()
+  }, [])
+
+  useEffect(() => {
+    registrarVista(location.pathname)
+  }, [location.pathname])
+
   return (
     <div className="min-h-screen bg-ink text-white">
       <header className="sticky top-0 z-30 border-b border-white/8 bg-ink/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src="/logo-icon.png" alt="Lujos El Espejo 2" className="size-9 rounded-lg" />
+            <img src="/logo-icon.png" alt={NOMBRE_NEGOCIO} className="size-9 rounded-lg" />
             <span className="font-display text-lg font-semibold leading-none tracking-wide">
-              LUJOS EL ESPEJO <span className="text-brand-500">2</span>
+              LUJOS EL ESPEJO
             </span>
           </Link>
 
@@ -57,7 +69,13 @@ export default function PublicLayout() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href={whatsappActual} target="_blank" rel="noreferrer" className="btn-primary hidden sm:inline-flex">
+            <a
+              href={whatsappActual}
+              target="_blank"
+              rel="noreferrer"
+              data-cta="header"
+              className="btn-primary hidden sm:inline-flex"
+            >
               <WhatsAppIcon size={16} />
               Escríbenos
             </a>
@@ -77,7 +95,13 @@ export default function PublicLayout() {
             {NAV_LINKS.map((l) => (
               <NavItem key={l.to} {...l} onClick={() => setMenuAbierto(false)} />
             ))}
-            <a href={whatsappActual} target="_blank" rel="noreferrer" className="btn-primary mt-1 inline-flex">
+            <a
+              href={whatsappActual}
+              target="_blank"
+              rel="noreferrer"
+              data-cta="menu"
+              className="btn-primary mt-1 inline-flex"
+            >
               <WhatsAppIcon size={16} />
               Escríbenos por WhatsApp
             </a>
@@ -91,9 +115,9 @@ export default function PublicLayout() {
 
       <footer className="border-t border-white/8">
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-3 px-5 py-8 text-center sm:flex-row sm:justify-between sm:text-left">
-          <p className="text-sm text-muted">© {new Date().getFullYear()} Lujos El Espejo 2</p>
+          <p className="text-sm text-muted">© {new Date().getFullYear()} {NOMBRE_NEGOCIO}</p>
           <div className="flex items-center gap-4 text-sm text-muted">
-            <a href={`tel:+${WHATSAPP}`} className="hover:text-white">
+            <a href={`tel:+${WHATSAPP}`} data-cta="footer" className="hover:text-white">
               +57 320 264 2451
             </a>
             <a
@@ -112,6 +136,7 @@ export default function PublicLayout() {
         href={whatsappActual}
         target="_blank"
         rel="noreferrer"
+        data-cta="flotante"
         aria-label="Escríbenos por WhatsApp"
         className="fixed bottom-5 right-5 z-40 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/40 transition hover:scale-105"
       >

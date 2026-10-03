@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
+import { altPorSlot } from '../../lib/sitioFotos'
 
 // Muestra la foto real subida desde /admin/sitio-web para este slot, o el
 // degradado placeholder mientras no exista una — así las páginas públicas
 // no dependen de que las fotos ya estén cargadas para verse bien. Si hay
 // foto, es clicable: abre un visor a pantalla completa para ver el detalle.
-export default function FotoPublica({ slotKey, fotos, className = '' }) {
+export default function FotoPublica({ slotKey, fotos, alts, className = '' }) {
   const [abierta, setAbierta] = useState(false)
   const url = fotos?.[slotKey]
+  const alt = altPorSlot(slotKey, alts)
 
   useEffect(() => {
     if (!abierta) return
@@ -33,7 +35,7 @@ export default function FotoPublica({ slotKey, fotos, className = '' }) {
         }}
         className={`${className} cursor-zoom-in overflow-hidden`}
       >
-        <img src={url} alt="" loading="lazy" className="size-full object-cover" />
+        <img src={url} alt={alt} loading="lazy" decoding="async" className="size-full object-cover" />
       </div>
 
       {abierta && (
@@ -51,7 +53,7 @@ export default function FotoPublica({ slotKey, fotos, className = '' }) {
           </button>
           <img
             src={url}
-            alt=""
+            alt={alt}
             onClick={(e) => e.stopPropagation()}
             className="max-h-full max-w-full rounded-lg object-contain"
           />

@@ -1,6 +1,8 @@
 // Datos y textos compartidos entre todas las páginas públicas del sitio
 // (no confundir con /admin — esto es solo para el sitio de cara al público).
 
+export const SITIO = 'https://lujoselespejo.com'
+export const NOMBRE_NEGOCIO = 'Lujos El Espejo'
 export const WHATSAPP = '573202642451'
 export const DIRECCION = 'Cra 12 #29-02, Barrio La Victoria, Pereira, Risaralda'
 
@@ -95,14 +97,20 @@ export const DIAGNOSTICO = [
   { problema: 'Otro', mensaje: 'Hola, quiero solucionar un problema con mi vehículo. Necesito: ' },
 ]
 
+// Identificador de negocio estable para enlazar el schema de los servicios
+// con el del negocio (provider), sin repetir el objeto completo.
+const NEGOCIO_ID = `${SITIO}/#negocio`
+
 export function buildJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'AutomotiveBusiness',
-    name: 'Lujos El Espejo 2',
+    '@id': NEGOCIO_ID,
+    name: NOMBRE_NEGOCIO,
+    url: `${SITIO}/`,
     description:
-      'Lunas para carro y moto, plumillas, bombillería, seguros e identicar, en el barrio La Victoria, Pereira.',
-    image: 'https://lujoselespejo.com/logo-horizontal.png',
+      'Lunas y espejos para carro y moto, plumillas, bombillería, protección antirrobo e Identicar. Barrio La Victoria, Pereira.',
+    image: `${SITIO}/logo-horizontal.png`,
     telephone: '+573202642451',
     address: {
       '@type': 'PostalAddress',
@@ -111,6 +119,12 @@ export function buildJsonLd() {
       addressRegion: 'Risaralda',
       addressCountry: 'CO',
     },
+    // Pereira es la ubicación del local; el negocio también hace envíos a
+    // otras zonas, así que el área no se limita a la ciudad.
+    areaServed: [
+      { '@type': 'City', name: 'Pereira' },
+      { '@type': 'Country', name: 'Colombia' },
+    ],
     openingHoursSpecification: {
       '@type': 'OpeningHoursSpecification',
       dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
@@ -122,5 +136,36 @@ export function buildJsonLd() {
       '@type': 'Offer',
       itemOffered: { '@type': 'Service', name: s.nombre, description: s.desc },
     })),
+  }
+}
+
+// Migas de pan: items = [{ nombre, path }] en orden, desde la portada.
+export function buildBreadcrumbJsonLd(items) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: item.nombre,
+      item: `${SITIO}${item.path}`,
+    })),
+  }
+}
+
+// Schema de un servicio concreto. Sin precio a propósito: el negocio no
+// tiene precios publicados y no se inventan.
+export function buildServicioJsonLd({ nombre, desc, path }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: nombre,
+    description: desc,
+    url: `${SITIO}${path}`,
+    provider: {
+      '@type': 'AutomotiveBusiness',
+      name: NOMBRE_NEGOCIO,
+      url: `${SITIO}/`,
+    },
   }
 }

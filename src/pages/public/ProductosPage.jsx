@@ -1,7 +1,8 @@
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
 import FotoPublica from '../../components/public/FotoPublica'
-import { CATEGORIAS, WHATSAPP_HREF } from '../../lib/publicContent'
+import JsonLd from '../../components/public/JsonLd'
+import { CATEGORIAS, WHATSAPP_HREF, buildBreadcrumbJsonLd } from '../../lib/publicContent'
 import { useSitioFotos } from '../../lib/sitioFotos'
 import { useSeo } from '../../lib/useSeo'
 
@@ -12,20 +13,27 @@ import { useSeo } from '../../lib/useSeo'
 // pregunten por WhatsApp lo puntual.
 
 export default function ProductosPage() {
-  const { fotos } = useSitioFotos()
+  const { fotos, alts } = useSitioFotos()
   useSeo({
-    title: 'Fotos de nuestro trabajo — Lujos El Espejo 2, Pereira',
+    title: 'Trabajos y accesorios para carros en Pereira | Lujos El Espejo',
     description:
-      'Trabajos reales de lunas, plumillas, bombillería y más, hechos en nuestro taller del barrio La Victoria, Pereira.',
+      'Trabajos reales de lunas, plumillas, bombillería, protección antirrobo e Identicar, hechos en nuestro local del barrio La Victoria, Pereira.',
     path: '/productos',
   })
 
   return (
     <div>
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { nombre: 'Inicio', path: '/' },
+          { nombre: 'Trabajos', path: '/productos' },
+        ])}
+      />
+
       <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-20">
         <Reveal>
           <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl" style={{ textWrap: 'balance' }}>
-            Nuestro trabajo
+            Trabajos y accesorios para carros
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base text-muted">
             Una muestra de lo que manejamos. Si no ves tu referencia exacta, seguro la tenemos o te la conseguimos —
@@ -46,6 +54,7 @@ export default function ProductosPage() {
                   key={i}
                   slotKey={`productos-${cat.id}-${i}`}
                   fotos={fotos}
+                  alts={alts}
                   className="aspect-square rounded-xl border border-white/8"
                 />
               ))}
@@ -62,7 +71,7 @@ export default function ProductosPage() {
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">
             Cuéntanos qué necesitas y te confirmamos disponibilidad enseguida.
           </p>
-          <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
+          <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" data-cta="cierre" className="btn-primary mt-6 inline-flex">
             <WhatsAppIcon size={16} />
             Preguntar por WhatsApp
           </a>

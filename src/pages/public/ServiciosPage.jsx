@@ -2,12 +2,13 @@ import { Link } from 'react-router-dom'
 import { ArrowUpRight } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
-import { SERVICIOS_GENERALES, WHATSAPP_HREF } from '../../lib/publicContent'
+import JsonLd from '../../components/public/JsonLd'
+import { SERVICIOS_GENERALES, WHATSAPP_HREF, buildBreadcrumbJsonLd } from '../../lib/publicContent'
 import { useSeo } from '../../lib/useSeo'
 
 export default function ServiciosPage() {
   useSeo({
-    title: 'Plumillas, bombillería y más para tu carro en Pereira | Lujos El Espejo 2',
+    title: 'Plumillas, bombillería y más para tu carro en Pereira | Lujos El Espejo',
     description:
       'Cambio de plumillas, bombillos LED, protección antirrobo e Identicar para tu carro o moto en Pereira, barrio La Victoria.',
     path: '/servicios',
@@ -15,6 +16,13 @@ export default function ServiciosPage() {
 
   return (
     <div>
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { nombre: 'Inicio', path: '/' },
+          { nombre: 'Servicios', path: '/servicios' },
+        ])}
+      />
+
       <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-20">
         <Reveal>
           <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl" style={{ textWrap: 'balance' }}>
@@ -54,7 +62,7 @@ export default function ServiciosPage() {
           <p className="mx-auto mt-2 max-w-md text-sm text-muted">
             Escríbenos por WhatsApp — manejamos más referencias de las que alcanzamos a mostrar aquí.
           </p>
-          <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary mt-6 inline-flex">
+          <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" data-cta="cierre" className="btn-primary mt-6 inline-flex">
             <WhatsAppIcon size={16} />
             Escríbenos por WhatsApp
           </a>

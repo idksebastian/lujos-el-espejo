@@ -1,25 +1,35 @@
 import { MapPin, Clock, Truck, Phone, ArrowUpRight } from 'lucide-react'
 import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
-import { DIRECCION, MAPA_QUERY, WHATSAPP, WHATSAPP_HREF } from '../../lib/publicContent'
+import JsonLd from '../../components/public/JsonLd'
+import { DIRECCION, MAPA_QUERY, WHATSAPP, WHATSAPP_HREF, buildBreadcrumbJsonLd } from '../../lib/publicContent'
 import { useSeo } from '../../lib/useSeo'
 
 export default function ContactoPage() {
   useSeo({
-    title: 'Contacto y ubicación en Pereira | Lujos El Espejo 2',
+    title: 'Contacto y ubicación en Pereira | Lujos El Espejo',
     description: 'Visítanos en el barrio La Victoria, Pereira, o escríbenos por WhatsApp. Dirección, horario y mapa.',
     path: '/contacto',
   })
 
   return (
     <div>
+      <JsonLd
+        data={buildBreadcrumbJsonLd([
+          { nombre: 'Inicio', path: '/' },
+          { nombre: 'Contacto', path: '/contacto' },
+        ])}
+      />
+
       <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:py-20">
         <Reveal>
           <h1 className="font-display text-4xl leading-tight text-white sm:text-5xl" style={{ textWrap: 'balance' }}>
-            Contáctanos
+            Encuéntranos en Pereira
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-base text-muted">
-            Escríbenos por WhatsApp o visítanos en el barrio La Victoria, Pereira.
+            Estamos en el barrio La Victoria, en Cra 12 #29-02, Pereira, Risaralda. Aquí puedes consultar por lunas y
+            espejos para carro y moto, plumillas, bombillería, protección antirrobo e Identicar. Si no puedes venir,
+            escríbenos por WhatsApp y te respondemos.
           </p>
         </Reveal>
       </section>
@@ -61,14 +71,14 @@ export default function ContactoPage() {
                 </span>
                 <div>
                   <p className="text-sm font-semibold text-white">Teléfono</p>
-                  <a href={`tel:+${WHATSAPP}`} className="text-sm text-muted hover:text-white">
+                  <a href={`tel:+${WHATSAPP}`} data-cta="contacto" className="text-sm text-muted hover:text-white">
                     +57 320 264 2451
                   </a>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
-                <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" className="btn-primary">
+                <a href={WHATSAPP_HREF} target="_blank" rel="noreferrer" data-cta="contacto" className="btn-primary">
                   <WhatsAppIcon size={16} />
                   Escríbenos por WhatsApp
                 </a>
@@ -76,6 +86,7 @@ export default function ContactoPage() {
                   href={`https://www.google.com/maps/search/?api=1&query=${MAPA_QUERY}`}
                   target="_blank"
                   rel="noreferrer"
+                  data-cta="contacto"
                   className="btn-secondary"
                 >
                   Cómo llegar
@@ -85,7 +96,7 @@ export default function ContactoPage() {
             </div>
             <div className="overflow-hidden rounded-2xl border border-white/8">
               <iframe
-                title="Ubicación de Lujos El Espejo 2"
+                title="Mapa de ubicación de Lujos El Espejo en Cra 12 #29-02, Pereira"
                 src={`https://maps.google.com/maps?q=${MAPA_QUERY}&output=embed`}
                 className="h-72 w-full lg:h-full"
                 style={{ border: 0 }}

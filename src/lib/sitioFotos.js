@@ -35,14 +35,45 @@ export const GALERIA_HOME = [
   'lunas-galeria-2',
 ]
 
+// Texto alternativo por defecto según la categoría del espacio (lo que el
+// admin eligió al ubicar la foto). Describe la categoría, no una foto puntual,
+// porque el sistema no sabe qué muestra cada imagen. Un alt propio guardado
+// en la columna `alt` de sitio_fotos tiene prioridad sobre este.
+const ALT_POR_CATEGORIA = {
+  'lunas-galeria': 'Trabajo de luna para carro, Lujos El Espejo en Pereira',
+  'servicio-plumillas': 'Cambio de plumillas para carro',
+  'servicio-bombilleria': 'Bombillería LED para vehículo',
+  'servicio-proteccion-antirrobo': 'Protección antirrobo para emblemas y lunas de carro',
+  'servicio-identicar': 'Placa grabada en la luna con Identicar',
+  'productos-lunas': 'Luna de espejo para carro',
+  'productos-plumillas': 'Plumillas para carro',
+  'productos-bombilleria': 'Bombillería LED para vehículo',
+  'productos-proteccion-antirrobo': 'Protección antirrobo para carro',
+  'productos-identicar': 'Identicar en luna de carro',
+}
+
+export function altPorSlot(slotKey, alts) {
+  const propio = alts?.[slotKey]
+  if (propio) return propio
+  const categoria = slotKey.replace(/-\d+$/, '')
+  return ALT_POR_CATEGORIA[categoria] ?? ''
+}
+
 export function useSitioFotos() {
   const [fotos, setFotos] = useState({})
+  const [alts, setAlts] = useState({})
   const [cargando, setCargando] = useState(true)
 
   async function recargar() {
     setCargando(true)
-    const { data } = await supabase.from('sitio_fotos').select('slot_key, url')
-    setFotos(Object.fromEntries((data ?? []).map((r) => [r.slot_key, r.url])))
+    // La columna `alt` llega con la migración 0014. Mientras no esté aplicada
+    // en Supabase, la consulta con `alt` falla: en ese caso se lee solo
+    // slot_key y url, para que las fotos sigan viéndose igual.
+    let { data, error } = await supabase.from('sitio_fotos').select('slot_key, url, alt')
+    if (error) ({ data } = await supabase.from('sitio_fotos').select('slot_key, url'))
+    const filas = data ?? []
+    setFotos(Object.fromEntries(filas.map((r) => [r.slot_key, r.url])))
+    setAlts(Object.fromEntries(filas.filter((r) => r.alt).map((r) => [r.slot_key, r.alt])))
     setCargando(false)
   }
 
@@ -50,5 +81,5 @@ export function useSitioFotos() {
     recargar()
   }, [])
 
-  return { fotos, cargando, recargar }
+  return { fotos, alts, cargando, recargar }
 }
