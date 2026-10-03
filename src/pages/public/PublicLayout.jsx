@@ -132,16 +132,22 @@ export default function PublicLayout() {
         </div>
       </footer>
 
-      <a
-        href={whatsappActual}
-        target="_blank"
-        rel="noreferrer"
-        data-cta="flotante"
-        aria-label="Escríbenos por WhatsApp"
-        className="fixed bottom-5 right-5 z-40 flex size-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/40 transition hover:scale-105"
-      >
-        <WhatsAppIcon size={30} />
-      </a>
+      <div className="fixed bottom-5 right-5 z-40 flex items-center gap-3">
+        <span className="max-w-44 rounded-xl border border-white/10 bg-surface px-3 py-2 text-xs font-medium leading-snug text-white shadow-lg shadow-black/40">
+          ¿Necesitas ayuda con tu vehículo?
+        </span>
+        <a
+          href={whatsappActual}
+          target="_blank"
+          rel="noreferrer"
+          data-cta="flotante"
+          aria-label="Escríbenos por WhatsApp"
+          title="Escríbenos por WhatsApp"
+          className="flex size-14 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/40 transition hover:scale-105"
+        >
+          <WhatsAppIcon size={30} />
+        </a>
+      </div>
     </div>
   )
 }

@@ -4,6 +4,7 @@ import WhatsAppIcon from '../../components/public/WhatsAppIcon'
 import Reveal from '../../components/public/Reveal'
 import FotoPublica from '../../components/public/FotoPublica'
 import JsonLd from '../../components/public/JsonLd'
+import ConsultaLunaForm from '../../components/public/ConsultaLunaForm'
 import {
   CATEGORIAS,
   buildBreadcrumbJsonLd,
@@ -200,6 +201,9 @@ export default function LunasPage() {
               </li>
             ))}
           </ul>
+          <div className="mt-6">
+            <ConsultaLunaForm />
+          </div>
           <p className="mt-4 text-sm leading-relaxed text-muted">
             Atendemos vehículos de distintas marcas. Si nos envías una foto del espejo o de la luna, la búsqueda es más
             rápida.
