@@ -6,7 +6,7 @@
 // Solo se llama desde las páginas públicas (PublicLayout), así que el panel
 // de administración nunca envía eventos.
 
-const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-HCFM85M6NJ'
+const GA_ID = import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-Q75675PN2V'
 
 // Solo se envían datos desde el dominio de producción. localhost, previews
 // de Vercel y cualquier otro host no inicializan GA4, así que las funciones
